@@ -1,0 +1,152 @@
+import { Board } from './Board';
+import { Provider } from 'react-redux';
+import { CellActions, CellReduce } from '../store/CellSlice';
+import { configureStore, Store } from '@reduxjs/toolkit';
+import { ToolkitStore } from '@reduxjs/toolkit/dist/configureStore';
+import { ArrowType, CellStyle, PointData } from '../store/type/Cell';
+import { RootState } from '../store';
+
+const BedTest = ({ store }: { store: Store<unknown> }) => {
+  return (
+    <Provider store={store}>
+      <Board></Board>
+    </Provider>
+  );
+};
+
+const addLine = (store: ToolkitStore, id: string, points: PointData[], style: CellStyle = {}) => {
+  return store.dispatch(CellActions.addLine({ id, points, style }));
+};
+
+describe('测试线条', () => {
+  let store: ToolkitStore;
+  beforeEach(() => {
+    store = configureStore({
+      reducer: {
+        cell: CellReduce,
+      },
+    });
+  });
+
+  it('显示线条', () => {
+    addLine(store, 'cell1', [
+      { x: 10, y: 10 },
+      { x: 110, y: 110 },
+    ]);
+    cy.mount(<BedTest store={store} />);
+    cy.get('.mx-shape polyline').should('have.attr', 'points', '10,10 110,110');
+  });
+
+  it('点击线条时，显示线条选中框', () => {
+    addLine(store, 'cell1', [
+      { x: 10, y: 10 },
+      { x: 110, y: 110 },
+    ]);
+    cy.mount(<BedTest store={store} />);
+    cy.get('[data-cell-id="cell1"]').click();
+    cy.get('.mx-line-selection-box').should('have.length', 1);
+  });
+
+  describe('测试移动线条场景', () => {
+    it('移动直线', () => {
+      addLine(store, 'cell1', [
+        { x: 10, y: 10 },
+        { x: 110, y: 110 },
+      ]);
+      cy.mount(<BedTest store={store} />);
+      cy.get('body')
+        .mousedown(20, 20)
+        .mousemove(120, 120)
+        .mouseup(120, 120)
+        .then(() => {
+          chai.expect((store.getState() as RootState).cell.map['cell1'].points).eql([
+            { x: 110, y: 110 },
+            { x: 210, y: 210 },
+          ]);
+        });
+    });
+
+    it('放大 200% 时移动直线', () => {
+      addLine(store, 'cell1', [
+        { x: 10, y: 10 },
+        { x: 110, y: 110 },
+      ]);
+      store.dispatch(CellActions.scale({ scale: 2, basePoint: { x: 0, y: 0 } }));
+      cy.mount(<BedTest store={store} />);
+      cy.get('body').mousedown(20, 20).mousemove(120, 120).mouseup(120, 120);
+      cy.get('[data-cell-id="cell1"] polyline').should('have.attr', 'points', '60,60 160,160');
+    });
+
+    it('白板偏移 20px 时移动直线', () => {
+      addLine(store, 'cell1', [
+        { x: 10, y: 10 },
+        { x: 110, y: 110 },
+      ]);
+      store.dispatch(CellActions.translate({ x: 20, y: 20 }));
+      cy.mount(<BedTest store={store} />);
+      cy.get('body').mousedown(30, 30).mousemove(130, 130).mouseup(130, 130);
+      cy.get('[data-cell-id="cell1"] polyline').should('have.attr', 'points', '110,110 210,210');
+    });
+
+    it('放大 200% 且白板偏移 10px 时移动直线', () => {
+      addLine(store, 'cell1', [
+        { x: 10, y: 10 },
+        { x: 110, y: 110 },
+      ]);
+      store.dispatch(CellActions.translate({ x: 10, y: 10 }));
+      store.dispatch(CellActions.scale({ scale: 2, basePoint: { x: 0, y: 0 } }));
+      cy.mount(<BedTest store={store} />);
+      cy.get('body').mousedown(40, 40).mousemove(140, 140).mouseup(140, 140);
+      cy.get('[data-cell-id="cell1"] polyline').should('have.attr', 'points', '60,60 160,160');
+    });
+
+    it('移动折线', () => {
+      addLine(store, 'cell1', [
+        { x: 100, y: 100 },
+        { x: 0, y: 0 },
+        { x: 50, y: 150 },
+      ]);
+      cy.mount(<BedTest store={store} />);
+
+      cy.get('body').mousedown(50, 50).mousemove(150, 150).mouseup(150, 150);
+      cy.get('[data-cell-id="cell1"] polyline').should('have.attr', 'points', '200,200 100,100 150,250');
+    });
+  });
+
+  describe('测试显示箭头', () => {
+    const points = [
+      { x: 10, y: 10 },
+      { x: 110, y: 110 },
+    ];
+
+    it('显示没有箭头', () => {
+      addLine(store, 'cell1', points);
+      cy.mount(<BedTest store={store} />);
+      cy.get('.mx-shape polyline').should('not.have.attr', 'marker-end');
+      cy.get('.mx-shape polyline').should('not.have.attr', 'marker-start');
+    });
+
+    it('显示结束位置的箭头', () => {
+      addLine(store, 'cell1', points, { endArrow: 'block' });
+      cy.mount(<BedTest store={store} />);
+      cy.get('.mx-shape polyline').should('have.attr', 'marker-end', 'url(#think-freely-block)');
+    });
+
+    it('显示开始位置的箭头', () => {
+      addLine(store, 'cell1', points, { startArrow: 'block' });
+      cy.mount(<BedTest store={store} />);
+      cy.get('.mx-shape polyline').should('have.attr', 'marker-start', 'url(#think-freely-block)');
+    });
+
+    describe('测试各种箭头种类', () => {
+      (['block', 'blockThin', 'open', 'oval', 'ovalThin', 'diamond', 'diamondThin'] as ArrowType[]).forEach((key) => {
+        it(`显示 ${key} 箭头`, () => {
+          addLine(store, 'cell1', points, { endArrow: key });
+          cy.mount(<BedTest store={store} />);
+          cy.get(`#think-freely-${key}`).should('have.length', 1);
+          cy.get('.mx-shape polyline').should('have.attr', 'marker-end', `url(#think-freely-${key})`);
+        });
+      });
+    });
+  });
+});

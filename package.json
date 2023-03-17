@@ -1,0 +1,14 @@
+{
+  "name": "think-freely",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "pnpm -F editor dev",
+    "build": "pnpm -F editor build",
+    "test": "pnpm -F core test"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

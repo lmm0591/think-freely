@@ -2,7 +2,7 @@ import { Point } from '../../model/Point';
 import { Rectangle } from '../../model/Rectangle';
 
 export type RectangleData = Pick<Rectangle, 'x' | 'y' | 'width' | 'height'>;
-export type CellType = 'STICKY' | 'GROUP' | 'LINE';
+export type CellType = 'STICKY' | 'GROUP' | 'LINE' | 'TEXT';
 export type ArrowType = 'block' | 'blockThin' | 'open' | 'oval' | 'ovalThin' | 'diamond' | 'diamondThin';
 export type CellStyle = {
   endArrow?: ArrowType;

@@ -128,6 +128,9 @@ export const CellSlice = createSlice({
       }
       state.map[payload.id] = { style: {}, ...payload, type: 'LINE', children: [] };
     },
+    addText: (state, { payload }: PayloadAction<Omit<CellData, 'type' | 'children' | 'style'> & { style?: CellStyle }>) => {
+      state.map[payload.id] = { style: {}, ...payload, type: 'TEXT', children: [] };
+    },
     moveCellsBySelected: (state, { payload }: PayloadAction<PointData>) => {
       const selectedRect = getSelectedCellGeometry(state.selectedCellIds, state.map);
       if (selectedRect === undefined) {

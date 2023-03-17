@@ -15,6 +15,7 @@ import { TextEditor } from './TextEditor';
 import { Line } from './Line';
 import { ArrowDefs } from './ArrowDefs';
 import { Zoom } from './Zoom';
+import { Text } from './Text';
 
 export const Board = () => {
   const cells = useSelector((state: RootState) => Object.values(state.cell.map));
@@ -84,6 +85,9 @@ export const Board = () => {
               return <Line key={cell.id} cellId={cell.id}></Line>;
             } else if (cell.type === 'STICKY') {
               return <Sticky key={cell.id} cellId={cell.id}></Sticky>;
+            } else if (cell.type === 'TEXT') {
+              console.log('cell: ', cell);
+              return <Text key={cell.id} cellId={cell.id}></Text>;
             }
           })}
         </g>

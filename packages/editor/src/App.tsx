@@ -1,7 +1,6 @@
 import { WhiteBoard } from '@tf/core';
 import { Connector } from './view/Connector';
 import { ToolBar } from './view/Tool';
-console.log('Core: ', WhiteBoard);
 
 export function App() {
   return (

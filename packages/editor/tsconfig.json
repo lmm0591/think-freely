@@ -16,6 +16,9 @@
     "noEmit": true,
     "types": ["cypress", "cypress-real-events"],
     "jsx": "react-jsx",
+    "paths": {
+      "@tf/core": ["../core/src/index.ts"]
+    }
   },
   "include": ["src", "cypress/support/cypress.d.ts"],
   "references": [{ "path": "./tsconfig.node.json" }]

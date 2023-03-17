@@ -346,7 +346,6 @@ describe('测试 CellSlice', () => {
 
     it('W -> E 方向移动 50px', () => {
       store = reducer(store, resizeCells({ orgCells: Object.values(store.map), vector: -50, direction: 'W' }));
-      console.log('store: ', store);
 
       chai.expect(store.map['cell1'].geometry).contain({ x: 100, width: 50 });
       chai.expect(store.map['line1'].points).eqls([

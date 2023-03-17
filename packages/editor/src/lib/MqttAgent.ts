@@ -91,7 +91,6 @@ export class MqttAgent {
     }
 
     this.client?.subscribe(`${topic}/event`, { qos: 2 }, (error: Error, granted: ISubscriptionGrant[]) => {
-      console.log('granted: ', granted);
       if (error) {
         this.event.emit('error', error);
       } else {

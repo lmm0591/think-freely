@@ -1,0 +1,4 @@
+{
+  "include": ["src", "cypress/support/cypress.d.ts"],
+  "references": [{ "path": "./tsconfig.node.json" }]
+}

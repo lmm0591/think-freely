@@ -1,7 +1,5 @@
 import { v4 } from 'uuid';
-import { useDispatch, useSelector } from 'react-redux';
 import { CellStore, CellActions } from '@tf/core';
-import { useEventListener } from 'ahooks';
 
 export const ToolBar = () => {
   const { scale, translate } = CellStore.getState().cell;

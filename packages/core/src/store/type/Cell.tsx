@@ -7,6 +7,7 @@ export type ArrowType = 'block' | 'blockThin' | 'open' | 'oval' | 'ovalThin' | '
 export type CellStyle = {
   endArrow?: ArrowType;
   startArrow?: ArrowType;
+  fontColor?: string;
 };
 export type CellData = {
   id: string;

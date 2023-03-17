@@ -14,6 +14,7 @@ import { Group } from './Group';
 import { TextEditor } from './TextEditor';
 import { Line } from './Line';
 import { ArrowDefs } from './ArrowDefs';
+import { Zoom } from './Zoom';
 
 export const Board = () => {
   const cells = useSelector((state: RootState) => Object.values(state.cell.map));
@@ -30,25 +31,7 @@ export const Board = () => {
   });
 
   /*
-  const { translate, scale } = useSelector((state: RootState) => state.cell);
-
-  useEventListener(
-    'wheel',
-    (event) => {
-      event.stopPropagation();
-      event.preventDefault();
-      if (event.metaKey || event.ctrlKey) {
-        dispatch(CellActions.scale({ scale: scale * (event.deltaY < 0 ? 1.25 : 0.8), basePoint: { x: event.clientX, y: event.clientY } }));
-      } else {
-        let x = translate.x;
-        let y = translate.y;
-        x = translate.x - event.deltaX;
-        y = translate.y - event.deltaY;
-        dispatch(CellActions.translate({ x, y }));
-      }
-    },
-    { passive: false },
-  );
+  
   */
 
   useDND(ref, {
@@ -111,6 +94,7 @@ export const Board = () => {
       </svg>
       <RubberBand rect={rubberBandRect}></RubberBand>
       <TextEditor></TextEditor>
+      <Zoom></Zoom>
     </>
   );
 };

@@ -21,7 +21,7 @@ merge(options).then((report) => {
   const testReport = {
     schemaVersion: 1,
     label: 'tests',
-    message: `${stats.tests} passed,${stats.failures} failed`,
+    message: `${stats.tests} tests,${stats.passes} passed,${stats.pending} pending,${stats.failures} failed`,
     color: 'green',
   };
   console.log('testReport: ', testReport);

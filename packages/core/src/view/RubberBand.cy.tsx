@@ -25,16 +25,16 @@ describe('测试框选', () => {
   });
 
   it('在空白处点击移动鼠标，将显示 RubberBand', () => {
-    cy.mount(<BedTest store={store} />).then(() => {
-      cy.get('svg')
-        .mousedown(100, 100)
-        .mousemove(200, 200)
-        .wait(500)
-        .then(() => {
-          cy.get('.mxRubberBand').should('have.length', 1);
-        })
-        .mouseup(200, 200);
-    });
+    cy.mount(<BedTest store={store} />);
+    cy.get('svg')
+      .mousedown(100, 100)
+      .mousemove(200, 200)
+      .wait(500)
+      .then(() => {
+        cy.get('.mxRubberBand').should('have.length', 1);
+      })
+      .wait(500)
+      .mouseup(200, 200);
   });
 
   it('鼠标抬起后，RubberBand 将消失', () => {

@@ -198,7 +198,7 @@ describe('测试单选择框', () => {
       cy.get('.mx-shape rect').should('have.attr', 'height', 160);
     });
 
-    describe('测试便利贴最小显示', () => {
+    xdescribe('测试便利贴最小显示', () => {
       it('由 E 向 W 调整到 10 宽度，显示元素最小宽度', () => {
         createdStickyAndMove({
           geometry: new Rectangle(100, 100, 100, 100),

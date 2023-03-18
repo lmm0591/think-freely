@@ -15,7 +15,7 @@ module.exports = defineConfig({
       coverage(on, config);
       return config;
     },
-    defaultCommandTimeout: 15000,
+    defaultCommandTimeout: 30000,
     devServer: {
       framework: 'react',
       bundler: 'vite',

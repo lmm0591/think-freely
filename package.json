@@ -5,10 +5,13 @@
   "main": "index.js",
   "scripts": {
     "start": "pnpm -F editor dev",
-    "build": "pnpm -F editor build",
+    "build": "pnpm run test && pnpm -F editor build && node ./script/build-shields.js",
     "test": "pnpm -F core test"
   },
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "mochawesome-merge": "^4.3.0"
+  }
 }

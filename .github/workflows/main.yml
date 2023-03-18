@@ -21,6 +21,8 @@ jobs:
 
       - name: npm install, build and test
         run: |
+          node -p 'os.cpus()'
+          npx cypress info
           pnpm install
           pnpm run build
           pnpm test

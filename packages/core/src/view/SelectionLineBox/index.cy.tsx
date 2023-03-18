@@ -14,7 +14,7 @@ const BedTest = ({ store }: { store: Store<unknown> }) => {
   );
 };
 
-xdescribe('测试线条选择框', () => {
+describe('测试线条选择框', () => {
   let store: ToolkitStore;
 
   const addLine = (store: ToolkitStore, id: string, points: PointData[], style: CellStyle = {}) => {

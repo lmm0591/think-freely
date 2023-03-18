@@ -14,7 +14,7 @@ const BedTest = ({ store }: { store: Store<unknown> }) => {
   );
 };
 
-xdescribe('测试便利贴', () => {
+describe('测试便利贴', () => {
   let store: ToolkitStore;
   beforeEach(() => {
     store = configureStore({

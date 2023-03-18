@@ -16,13 +16,9 @@ module.exports = defineConfig({
       coverage(on, config);
       return config;
     },
-    defaultCommandTimeout: 30000,
     devServer: {
       framework: 'react',
       bundler: 'vite',
-    },
-    retries: {
-      runMode: 3
     },
     video: false,
   },

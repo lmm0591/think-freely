@@ -33,7 +33,8 @@ describe('测试便利贴', () => {
 
   it('移动便利贴', () => {
     store.dispatch(CellActions.addSticky({ id: 'cell1', geometry: new Rectangle(0, 0, 100, 100).toRectangleData() }));
-    cy.mount(<BedTest store={store} />);
+    cy.wait(500);
+    cy.mount(<BedTest store={store} />).wait(500);
     cy.get('body').mousedown(10, 10).mousemove(210, 110).mouseup(210, 110);
     cy.get('.mx-shape').should('have.attr', 'transform', 'translate(200, 100)');
   });

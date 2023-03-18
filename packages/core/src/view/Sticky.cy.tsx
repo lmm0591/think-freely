@@ -32,12 +32,10 @@ describe('测试便利贴', () => {
   }
 
   it('移动便利贴', () => {
-    createdStickyAndMove({
-      geometry: new Rectangle(0, 0, 100, 100),
-      moveToPoint: new Point(200, 100),
-    }).then(() => {
-      cy.get('.mx-shape').should('have.attr', 'transform', 'translate(200, 100)');
-    });
+    store.dispatch(CellActions.addSticky({ id: 'cell1', geometry: new Rectangle(0, 0, 100, 100).toRectangleData() }));
+    cy.mount(<BedTest store={store} />);
+    cy.get('body').mousedown(10, 10).mousemove(210, 110).mouseup(210, 110);
+    cy.get('.mx-shape').should('have.attr', 'transform', 'translate(200, 100)');
   });
 
   it('当白板右下角偏移 10 px，元素向 SE 方向移动 50 px 时, 元素 x 和 y 坐标增加 50 px', () => {

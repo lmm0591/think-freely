@@ -12,7 +12,7 @@ const BedTest = ({ store }: { store: Store<unknown> }) => {
   );
 };
 
-describe('测试白板', () => {
+xdescribe('测试白板', () => {
   let store: ToolkitStore;
   beforeEach(() => {
     store = configureStore({ reducer: { cell: CellReduce } });

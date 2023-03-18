@@ -1,4 +1,8 @@
 const fs = require('fs')
-if(!fs.existsSync('./.cache')){
-  fs.mkdirSync('./.cache')
+const path = require('path')
+const dir = path.join(__filename, '../../.cache')
+
+
+if(!fs.existsSync(dir)){
+  fs.mkdirSync(dir)
 }

@@ -20,7 +20,7 @@ jobs:
           component: true
           # Starts web server for E2E tests - replace with your own server invocation
           # https://docs.cypress.io/guides/continuous-integration/introduction#Boot-your-server
-          start: npm start
+          start: pnpm install && pnpm run test
           working-directory: packages/core
           parallel: true # Runs test in parallel using settings above
         env:

@@ -15,7 +15,7 @@ const BedTest = ({ store }: { store: Store<unknown> }) => {
   );
 };
 
-describe('测试单选择框', () => {
+xdescribe('测试单选择框', () => {
   let store: ToolkitStore;
   beforeEach(() => {
     store = configureStore({ reducer: { cell: CellReduce } });

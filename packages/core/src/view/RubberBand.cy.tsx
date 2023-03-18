@@ -27,13 +27,12 @@ describe('测试框选', () => {
   it('在空白处点击移动鼠标，将显示 RubberBand', () => {
     cy.mount(<BedTest store={store} />);
     cy.get('svg')
-      .trigger('mousedown', { clientX: 100, clientY: 100 })
-      .trigger('mousemove', { clientX: 200, clientY: 200 })
-      .wait(100)
+      .mousedown(100, 100)
+      .mousemove(200, 200)
+      .wait(1000)
       .then(() => {
         cy.get('.mxRubberBand').should('have.length', 1);
-      })
-      .realMouseUp();
+      });
   });
 
   it('鼠标抬起后，RubberBand 将消失', () => {

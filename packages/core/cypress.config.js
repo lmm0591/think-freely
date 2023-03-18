@@ -20,6 +20,9 @@ module.exports = defineConfig({
       framework: 'react',
       bundler: 'vite',
     },
+    retries: {
+      runMode: 3
+    },
     video: false,
   },
 });

@@ -2,6 +2,7 @@ const { defineConfig } = require('cypress');
 const coverage = require('@cypress/code-coverage/task');
 
 module.exports = defineConfig({
+  projectId: 'b8o4qn',
   component: {
     reporter: 'mochawesome',
     reporterOptions: {

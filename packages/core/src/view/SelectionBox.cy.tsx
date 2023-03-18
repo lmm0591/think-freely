@@ -446,8 +446,10 @@ describe('测试多选框', () => {
     cy.get('.mx-selection-box')
       .trigger('mousedown', { clientX: 100, clientY: 100 })
       .trigger('mousemove', { clientX: 200, clientY: 200 })
-      .trigger('mouseup', { clientX: 200, clientY: 200 });
-    cy.get('[data-cell-id="cell1"]').should('have.attr', 'transform', 'translate(150, 150)');
-    cy.get('[data-cell-id="cell2"]').should('have.attr', 'transform', 'translate(150, 350)');
+      .trigger('mouseup', { clientX: 200, clientY: 200 })
+      .then(() => {
+        cy.get('[data-cell-id="cell1"]').should('have.attr', 'transform', 'translate(150, 150)');
+        cy.get('[data-cell-id="cell2"]').should('have.attr', 'transform', 'translate(150, 350)');
+      });
   });
 });

@@ -29,12 +29,8 @@ describe('测试框选', () => {
     cy.get('svg')
       .mousedown(100, 100)
       .mousemove(200, 200)
-      .wait(500)
-      .then(() => {
-        cy.get('.mxRubberBand').should('have.length', 1);
-      })
-      .wait(500)
-      .mouseup(200, 200);
+
+    cy.get('.mxRubberBand').should('have.length', 1);
   });
 
   it('鼠标抬起后，RubberBand 将消失', () => {

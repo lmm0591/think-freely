@@ -22,7 +22,7 @@ jobs:
       - name: npm install, build and test
         run: |
           pnpm install
-          # pnpm run test
+          pnpm run test
           pnpm run build
       - name: Deploy to netlify
         run: |

@@ -8,6 +8,7 @@ export type CellStyle = {
   endArrow?: ArrowType;
   startArrow?: ArrowType;
   fontColor?: string;
+  fontSize?: number;
 };
 export type CellData = {
   id: string;

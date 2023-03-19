@@ -6,7 +6,7 @@ const statements = JSON.parse(text).total.statements;
 const coverReport = {
   schemaVersion: 1,
   label: 'coverage',
-  message: `${statements.pct}`,
+  message: `${statements.pct}％`,
   color: 'green',
 };
 console.log('coverReport: ', coverReport);

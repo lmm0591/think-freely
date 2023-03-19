@@ -131,6 +131,11 @@ export const CellSlice = createSlice({
     addText: (state, { payload }: PayloadAction<Omit<CellData, 'type' | 'children' | 'style'> & { style?: CellStyle }>) => {
       state.map[payload.id] = { style: {}, ...payload, type: 'TEXT', children: [] };
     },
+    updateStyle: (state, { payload }: PayloadAction< { ids: string[], style: CellStyle }>) => {
+      payload.ids.filter((id) => state.map[id]).forEach(id => {
+        state.map[id].style = { ...state.map[id].style, ...payload.style }
+      })
+    },
     moveCellsBySelected: (state, { payload }: PayloadAction<PointData>) => {
       const selectedRect = getSelectedCellGeometry(state.selectedCellIds, state.map);
       if (selectedRect === undefined) {

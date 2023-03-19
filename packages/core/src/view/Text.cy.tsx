@@ -44,5 +44,30 @@ describe('测试文本元素', () => {
     });
   });
 
-  xit('修改文本元素的字色');
+
+  it('修改文本元素为蓝色', async () => {
+    store.dispatch(
+      CellActions.addText({ id: 'text1', text: 'Hello', style: { fontColor: 'red' }, geometry: { x: 50, y: 50, width: 100, height: 30 } }),
+    );
+    cy.mount(<BedTest store={store} />);
+
+    store.dispatch(
+      CellActions.updateStyle({ ids: ['text1'], style: { fontColor: 'blue' } }),
+    );
+
+    cy.get('svg').then(() => {
+      chai.expect((document.querySelector('[data-cell-id="text1"] foreignObject>div') as HTMLDivElement).style.color).eql('blue');
+    });
+  });
+
+  it('创建 20px 字号的文本元素', () => {
+    store.dispatch(
+      CellActions.addText({ id: 'text1', text: 'Hello', style: { fontSize: 20 }, geometry: { x: 50, y: 50, width: 100, height: 30 } }),
+    );
+    cy.mount(<BedTest store={store} />);
+
+    cy.get('svg').then(() => {
+      chai.expect((document.querySelector('[data-cell-id="text1"] foreignObject>div') as HTMLDivElement).style.fontSize).eql('20px');
+    });
+  });
 });

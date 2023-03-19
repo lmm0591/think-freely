@@ -16,7 +16,7 @@ export const Text = memo(({ cellId }: { cellId: string }) => {
         width={textCell.geometry.width}
         height={textCell.geometry.height}
       >
-        <div style={{ color: textCell.style.fontColor }}>{textCell.text}</div>
+        <div style={{ color: textCell.style.fontColor, fontSize: textCell.style.fontSize }}>{textCell.text}</div>
       </foreignObject>
     </g>
   );

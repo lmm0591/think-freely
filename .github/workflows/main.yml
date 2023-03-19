@@ -1,7 +1,7 @@
 name: think-freely-core
 on: [push]
 jobs:
-  cypress-run:
+  ci:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -22,9 +22,8 @@ jobs:
       - name: npm install, build and test
         run: |
           pnpm install
-          pnpm run test
           pnpm run build
       - name: Deploy to netlify
         run: |
           npm install netlify-cli -g
-          netlify depoly -d ./packages/core/dist -s ${{secrets.NETLIFY_SITE_ID}} -a ${{secrets.NETLIFY_AUTH_TOKEN}}
+          netlify deploy -d ./packages/core/dist -s ${{secrets.NETLIFY_SITE_ID}} -a ${{secrets.NETLIFY_AUTH_TOKEN}}

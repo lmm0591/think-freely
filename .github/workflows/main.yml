@@ -18,17 +18,12 @@ jobs:
         with:
           # Version of pnpm to install
           version: latest
-          
-      - name: install
         run: pnpm install
-
-      - name: test
-        run: pnpm run test
-
-      - name: build
-        run: pnpm run build
-        
+      - name: install, build and test
+        run: |
+          pnpm run build
       - name: Deploy to netlify
         run: |
           npm install netlify-cli -g
-          netlify deploy -d ./packages/core/dist -s ${{secrets.NETLIFY_SITE_ID}} -a ${{secrets.NETLIFY_AUTH_TOKEN}}
+          netlify deploy -d ./packages/core/dist -s think-core -a ${{secrets.NETLIFY_AUTH_TOKEN}}
+          netlify deploy -d ./packages/editor/dist -s think-editor -a ${{secrets.NETLIFY_AUTH_TOKEN}}

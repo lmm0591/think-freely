@@ -18,10 +18,16 @@ jobs:
         with:
           # Version of pnpm to install
           version: latest
+          
+      - name: Install
         run: pnpm install
-      - name: install, build and test
-        run: |
-          pnpm run build
+
+      - name: Test
+        run: pnpm run test
+
+      - name: Build
+        run: pnpm run build
+        
       - name: Deploy to netlify
         run: |
           npm install netlify-cli -g

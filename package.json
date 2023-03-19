@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "pnpm -F editor dev",
-    "build": "pnpm run test && pnpm -F editor build && node ./script/build-shields.js",
+    "build": "pnpm -F '*' build",
     "test": "pnpm -F core test"
   },
   "keywords": [],

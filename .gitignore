@@ -25,3 +25,7 @@ dist-ssr
 
 /packages/*/report
 /packages/*/.nyc_output
+.vercel
+
+# Local Netlify folder
+.netlify

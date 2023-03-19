@@ -1,7 +1,7 @@
 name: think-freely-core
 on: [push]
 jobs:
-  ci:
+  think-freely-core:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -18,10 +18,9 @@ jobs:
         with:
           # Version of pnpm to install
           version: latest
-
-      - name: npm install, build and test
+        run: pnpm install
+      - name: install, build and test
         run: |
-          pnpm install
           pnpm run build
       - name: Deploy to netlify
         run: |

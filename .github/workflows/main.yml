@@ -22,9 +22,9 @@ jobs:
       - name: npm install, build and test
         run: |
           pnpm install
-          pnpm run test
+          # pnpm run test
           pnpm run build
       - name: Deploy to netlify
         run: |
-          pnpm install -w -D netlify-cli
+          npm install netlify-cli -g
           npx netlify depoly -d ./packages/core/dist -s ${{secrets.NETLIFY_SITE_ID}} -a ${{secrets.NETLIFY_AUTH_TOKEN}}

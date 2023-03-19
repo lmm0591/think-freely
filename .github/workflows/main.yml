@@ -1,4 +1,4 @@
-name: Cypress Tests
+name: think-freely-core
 on: [push]
 jobs:
   cypress-run:
@@ -21,12 +21,10 @@ jobs:
 
       - name: npm install, build and test
         run: |
-          node -p 'os.cpus()'
-          npx cypress info
           pnpm install
           pnpm run test
           pnpm run build
       - name: Deploy to netlify
         run: |
-          pnpm install netlify-cli
+          pnpm install -w -D netlify-cli
           npx netlify depoly -d ./packages/core/dist -s ${{secrets.NETLIFY_SITE_ID}} -a ${{secrets.NETLIFY_AUTH_TOKEN}}

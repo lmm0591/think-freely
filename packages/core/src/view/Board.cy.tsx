@@ -40,8 +40,9 @@ describe('测试白板', () => {
       store.dispatch(CellActions.addSticky({ id: 'cell1', geometry: { x: 0, y: 0, width: 100, height: 100 } }));
       cy.mount(<BedTest store={store} />);
 
-      cy.get('body').mousedown(300, 300).mousemove(150, 150).mouseup(150, 150);
-      cy.get('.mx-selection-box').should('have.length', 1);
+      cy.get('body').mousedown(300, 300).mousemove(150, 150).mouseup(150, 150).then(() => {
+        chai.expect(document.querySelectorAll('.mx-selection-box')).to.length(1)
+      })
     });
 
     it('白板偏移 100px 时, 选中元素', () => {

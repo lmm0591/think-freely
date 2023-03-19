@@ -57,6 +57,7 @@ describe('测试线条', () => {
       cy.get('body')
         .mousedown(20, 20)
         .mousemove(120, 120)
+        .mousemove(120, 120)
         .mouseup(120, 120)
         .then(() => {
           chai.expect((store.getState() as RootState).cell.map['cell1'].points).eql([

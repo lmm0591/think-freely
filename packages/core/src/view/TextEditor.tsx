@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Rectangle } from '../model/Rectangle';
 import { RootState } from '../store';
 import { CellActions } from '../store/CellSlice';
+import { RectangleData } from '../store/type/Cell';
 
 export const TextEditor = memo(() => {
   const dispatch = useDispatch();
@@ -27,6 +28,17 @@ export const TextEditor = memo(() => {
       suppressContentEditableWarning
       data-placeholder="输入文本…"
       ref={(event) => event?.focus()}
+      onInput={(event) => {
+        const calculateRectDom = document.createElement('div');
+        calculateRectDom.innerHTML = (event.target as HTMLDivElement).innerHTML || '';
+        calculateRectDom.style.display = 'inline-block';
+        calculateRectDom.style.fontSize = `${editingCell.style.fontSize}px`;
+        document.body.appendChild(calculateRectDom);
+        const { width, height } = calculateRectDom.getBoundingClientRect();
+        const geometry = editingCell.geometry as RectangleData;
+        dispatch(CellActions.resizeCell({ id: editingCell.id, geometry: { ...geometry, width, height } }));
+        calculateRectDom.remove();
+      }}
       onBlur={({ target }) => {
         if (target.innerText !== editingCell.text) {
           dispatch(CellActions.finishEditing({ cellId: editingCell.id, text: target.innerText }));
@@ -46,7 +58,6 @@ export const TextEditor = memo(() => {
         overflow: 'hidden',
         transform: `scale(${scale})`,
         transformOrigin: 'top left',
-        fontFamily: `SourceHanSans, Arial, "Microsoft YaHei", "PingFang SC", sans-serif`,
       }}
     >
       {editingCell.text}

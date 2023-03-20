@@ -122,8 +122,11 @@ export const CellSlice = createSlice({
     addSticky: (state, { payload }: PayloadAction<Omit<CellData, 'type' | 'children' | 'style'> & { style?: CellStyle }>) => {
       state.map[payload.id] = {
         style: {
-          fontSize: 12
-        }, ...payload, type: 'STICKY', children: []
+          fontSize: 12,
+        },
+        ...payload,
+        type: 'STICKY',
+        children: [],
       };
     },
     addLine: (state, { payload }: PayloadAction<Omit<CellData, 'type' | 'children' | 'style'> & { style?: CellStyle }>) => {
@@ -133,14 +136,21 @@ export const CellSlice = createSlice({
       state.map[payload.id] = { style: {}, ...payload, type: 'LINE', children: [] };
     },
     addText: (state, { payload }: PayloadAction<Omit<CellData, 'type' | 'children' | 'style'> & { style?: CellStyle }>) => {
-      state.map[payload.id] = { style: {
-        fontSize: 12
-      }, ...payload, type: 'TEXT', children: [] };
+      state.map[payload.id] = {
+        style: {
+          fontSize: 12,
+        },
+        ...payload,
+        type: 'TEXT',
+        children: [],
+      };
     },
-    updateStyle: (state, { payload }: PayloadAction<{ ids: string[], style: CellStyle }>) => {
-      payload.ids.filter((id) => state.map[id]).forEach(id => {
-        state.map[id].style = { ...state.map[id].style, ...payload.style }
-      })
+    updateStyle: (state, { payload }: PayloadAction<{ ids: string[]; style: CellStyle }>) => {
+      payload.ids
+        .filter((id) => state.map[id])
+        .forEach((id) => {
+          state.map[id].style = { ...state.map[id].style, ...payload.style };
+        });
     },
     moveCellsBySelected: (state, { payload }: PayloadAction<PointData>) => {
       const selectedRect = getSelectedCellGeometry(state.selectedCellIds, state.map);
@@ -200,6 +210,12 @@ export const CellSlice = createSlice({
       }
       resizeRectCells(state, displayCells, oldDisplayRect, direction, vector);
       resizeLinePints(state, lineCells, oldDisplayRect, direction, vector);
+    },
+    resizeCell: (state, { payload: { id, geometry } }: PayloadAction<{ id: string; geometry: RectangleData }>) => {
+      const cell = state.map[id];
+      if (cell) {
+        cell.geometry = geometry;
+      }
     },
     resizeLine: (state, { payload }: PayloadAction<{ id: string; points: PointData[] }>) => {
       if (state.map[payload.id] === undefined || payload.points?.length < 2) {

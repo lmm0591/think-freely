@@ -86,7 +86,6 @@ export const Board = () => {
             } else if (cell.type === 'STICKY') {
               return <Sticky key={cell.id} cellId={cell.id}></Sticky>;
             } else if (cell.type === 'TEXT') {
-              console.log('cell: ', cell);
               return <Text key={cell.id} cellId={cell.id}></Text>;
             }
           })}

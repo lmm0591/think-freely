@@ -88,19 +88,4 @@ describe('测试文本元素', () => {
 
     cy.get("[data-cell-id='text1'] foreignObject").should('not.be.visible');
   });
-
-  it('输入的文字过长时,文本元素会自动变宽', () => {
-    store.dispatch(
-      CellActions.addText({ id: 'text1', text: 'Hello', style: { fontSize: 20 }, geometry: { x: 50, y: 50, width: 100, height: 30 } }),
-    );
-    store.dispatch(CellActions.editCell('text1'));
-    cy.mount(<BedTest store={store} />);
-
-    cy.get('.mxCellEditor')
-      .type('Hello, World')
-      .then(() => {
-        const { width } = (document.querySelector('.mxCellEditor') as HTMLDivElement).getBoundingClientRect();
-        chai.expect(width).be.greaterThan(100);
-      });
-  });
 });

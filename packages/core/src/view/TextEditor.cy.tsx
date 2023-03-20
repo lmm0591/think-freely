@@ -79,7 +79,7 @@ describe('测试文本编辑器', () => {
 
     it('当显示文本编辑器时，将与元素的大小一致', () => {
       cy.get('svg').then(() => {
-        const { width, height,transform } = (document.querySelector('.mxCellEditor') as HTMLDivElement).style;
+        const { width, height, transform } = (document.querySelector('.mxCellEditor') as HTMLDivElement).style;
         chai.expect(width).to.eq('100px');
         chai.expect(height).to.eq('100px');
         chai.expect(transform).to.eq('scale(2)');
@@ -123,7 +123,7 @@ describe('测试文本编辑器', () => {
 
     it('当显示文本编辑器时，将与元素的大小一致', () => {
       cy.get('svg').then(() => {
-        const { width, height, transform} = (document.querySelector('.mxCellEditor') as HTMLDivElement).style;
+        const { width, height, transform } = (document.querySelector('.mxCellEditor') as HTMLDivElement).style;
         chai.expect(width).to.eq('100px');
         chai.expect(height).to.eq('100px');
         chai.expect(transform).to.eq('scale(2)');
@@ -145,6 +145,43 @@ describe('测试文本编辑器', () => {
     cy.mount(<BedTest store={store} />);
 
     cy.get('.mxCellEditor').should('have.text', 'hello');
+  });
+
+  describe('修改编辑器文字场景', () => {
+    beforeEach(() => {
+      store.dispatch(CellActions.addText({ id: 'text1', text: 'hello', geometry: { x: 50, y: 50, width: 100, height: 100 } }));
+      store.dispatch(CellActions.editCell('text1'));
+      cy.spy(CellActions, 'resizeCell');
+      cy.mount(<BedTest store={store} />);
+    });
+
+    it('当没有定义 autoWidth 样式时不会触发修改宽度 Actions', () => {
+      cy.get('.mxCellEditor')
+        .type('Hello, World')
+        .then(() => {
+          expect(CellActions.resizeCell).not.to.called;
+        });
+    });
+
+    it('当样式 autoWidth=false 时不会触发修改宽度 Actions', () => {
+      store.dispatch(CellActions.updateStyle({ ids: ['text1'], style: { autoWidth: false } }));
+
+      cy.get('.mxCellEditor')
+        .type('Hello, World')
+        .then(() => {
+          expect(CellActions.resizeCell).not.to.called;
+        });
+    });
+
+    it('当样式 autoWidth=true 时触发修改宽度 Actions', () => {
+      store.dispatch(CellActions.updateStyle({ ids: ['text1'], style: { autoWidth: true } }));
+
+      cy.get('.mxCellEditor')
+        .type('Hello, World')
+        .then(() => {
+          expect(CellActions.resizeCell).to.called;
+        });
+    });
   });
 
   describe('测试点击空白位置场景', () => {

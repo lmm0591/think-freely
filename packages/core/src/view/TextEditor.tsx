@@ -35,15 +35,17 @@ export const TextEditor = memo(() => {
       style={{
         lineHeight: 1.2,
         fontWeight: 'normal',
-        fontSize: 14,
+        fontSize: `${editingCell.style.fontSize}px`,
         zIndex: 1,
         position: 'absolute',
-        width: `${geometry.width}px`,
-        height: `${geometry.height}px`,
+        width: `${editingCell.geometry.width}px`,
+        height: `${editingCell.geometry.height}px`,
         left: `${geometry.x}px`,
         top: `${geometry.y}px`,
         outline: 'none',
         overflow: 'hidden',
+        transform: `scale(${scale})`,
+        transformOrigin: 'top left',
         fontFamily: `SourceHanSans, Arial, "Microsoft YaHei", "PingFang SC", sans-serif`,
       }}
     >

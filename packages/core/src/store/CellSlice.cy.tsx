@@ -3,6 +3,7 @@ import { CellActions, CellSlice, CellState, initialState } from './CellSlice';
 const { reducer } = CellSlice;
 const {
   addSticky,
+  addText,
   moveCellsBySelected,
   selectDisplayCells,
   clearSelected,
@@ -20,9 +21,28 @@ const {
 } = CellActions;
 
 describe('测试 CellSlice', () => {
-  it('当调用 addSticky 时，将创建一个便利贴', () => {
-    let store = reducer(initialState, addSticky({ id: 'cell1', geometry: { x: 0, y: 0, width: 100, height: 100 } }));
-    chai.expect(store.map['cell1']).not.empty;
+  describe('测试创建便利贴场景', () => {
+    it('当调用 addSticky 时，将创建一个便利贴', () => {
+      let store = reducer(initialState, addSticky({ id: 'cell1', geometry: { x: 0, y: 0, width: 100, height: 100 } }));
+      chai.expect(store.map['cell1']).not.empty;
+    });
+
+    it('当调用 addSticky 时，默认字号为 12 号', () => {
+      let store = reducer(initialState, addSticky({ id: 'cell1', geometry: { x: 0, y: 0, width: 100, height: 100 } }));
+      chai.expect(store.map['cell1'].style.fontSize).to.eql(12);
+    });
+  });
+
+  describe('测试创建文本场景', () => {
+    it('当调用 addText 时，将创建一个文本', () => {
+      let store = reducer(initialState, addText({ id: 'cell1', geometry: { x: 0, y: 0, width: 100, height: 100 } }));
+      chai.expect(store.map['cell1']).not.empty;
+    });
+
+    it('当调用 addText 时，默认字号为 12 号', () => {
+      let store = reducer(initialState, addText({ id: 'cell1', geometry: { x: 0, y: 0, width: 100, height: 100 } }));
+      chai.expect(store.map['cell1'].style.fontSize).to.eql(12);
+    });
   });
 
   describe('创建线条', () => {

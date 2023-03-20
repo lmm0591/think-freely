@@ -26,6 +26,6 @@ dist-ssr
 /packages/*/report
 /packages/*/.nyc_output
 .vercel
-
+/packages/core/cypress/videos
 # Local Netlify folder
 .netlify

@@ -61,7 +61,7 @@ describe('测试文本编辑器', () => {
     });
   });
 
-  describe('测试基于原点坐标缩放 1 倍', () => {
+  describe('测试基于原点坐标放大 200％', () => {
     beforeEach(() => {
       store.dispatch(CellActions.scale({ scale: 2, basePoint: { x: 0, y: 0 } }));
       store.dispatch(CellActions.addSticky({ id: 'cell1', geometry: { x: 50, y: 50, width: 100, height: 100 } }));
@@ -79,9 +79,10 @@ describe('测试文本编辑器', () => {
 
     it('当显示文本编辑器时，将与元素的大小一致', () => {
       cy.get('svg').then(() => {
-        const { width, height } = (document.querySelector('.mxCellEditor') as HTMLDivElement).style;
-        chai.expect(width).to.eq('200px');
-        chai.expect(height).to.eq('200px');
+        const { width, height,transform } = (document.querySelector('.mxCellEditor') as HTMLDivElement).style;
+        chai.expect(width).to.eq('100px');
+        chai.expect(height).to.eq('100px');
+        chai.expect(transform).to.eq('scale(2)');
       });
     });
   });
@@ -103,7 +104,7 @@ describe('测试文本编辑器', () => {
     });
   });
 
-  describe('测试白板右下角偏移 50 px 且放大 1 倍', () => {
+  describe('测试白板右下角偏移 50 px 且放大 200%', () => {
     beforeEach(() => {
       store.dispatch(CellActions.translate({ x: 50, y: 50 }));
       store.dispatch(CellActions.scale({ scale: 2, basePoint: { x: 0, y: 0 } }));
@@ -122,9 +123,10 @@ describe('测试文本编辑器', () => {
 
     it('当显示文本编辑器时，将与元素的大小一致', () => {
       cy.get('svg').then(() => {
-        const { width, height } = (document.querySelector('.mxCellEditor') as HTMLDivElement).style;
-        chai.expect(width).to.eq('200px');
-        chai.expect(height).to.eq('200px');
+        const { width, height, transform} = (document.querySelector('.mxCellEditor') as HTMLDivElement).style;
+        chai.expect(width).to.eq('100px');
+        chai.expect(height).to.eq('100px');
+        chai.expect(transform).to.eq('scale(2)');
       });
     });
   });

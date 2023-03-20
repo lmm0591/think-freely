@@ -66,7 +66,7 @@ export const Sticky = memo(({ cellId }: { cellId: string }) => {
         width={stickyCell.geometry.width}
         height={stickyCell.geometry.height}
       >
-        <div>{stickyCell.text}</div>
+        <div style={{ color: stickyCell.style.fontColor, fontSize: stickyCell.style.fontSize }}>{stickyCell.text}</div>
       </foreignObject>
     </g>
   );

@@ -1,0 +1,8 @@
+@font-face {
+  font-family: 'virgil';
+  src: url('./virgil.worff2') format('woff2');
+}
+
+body {
+  font-family: 'virgil';
+}

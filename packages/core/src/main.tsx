@@ -5,6 +5,7 @@ import { CellActions } from './store/CellSlice';
 import { CellData } from './store/type/Cell';
 import { store } from './store';
 import { App } from './App';
+import './main.css';
 
 const emitter = new EventEmitter();
 export const EmitterContext = React.createContext(emitter);

@@ -20,6 +20,6 @@ module.exports = defineConfig({
       bundler: 'vite',
     },
     retries: 3,
-    video: false,
+    video: true,
   },
 });

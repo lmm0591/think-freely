@@ -218,6 +218,7 @@ export const CellSlice = createSlice({
           cell.geometry = geometry;
           cell.points = points;
           delete cell.style.autoWidth;
+          cell.style.autoHeight = true;
         }
       });
     },

@@ -29,18 +29,21 @@ export const TextEditor = memo(() => {
       data-placeholder="输入文本…"
       ref={(event) => event?.focus()}
       onInput={(event) => {
-        if (!editingCell.style.autoWidth) {
-          return;
-        }
         const calculateRectDom = document.createElement('div');
         calculateRectDom.innerHTML = (event.target as HTMLDivElement).innerHTML || '';
         calculateRectDom.style.display = 'inline-block';
         calculateRectDom.style.fontSize = `${editingCell.style.fontSize}px`;
         document.body.appendChild(calculateRectDom);
-        const { width } = calculateRectDom.getBoundingClientRect();
-        const geometry = editingCell.geometry as RectangleData;
-        console.log('onInput: ', { ...geometry, width: Math.ceil(width) });
-        dispatch(CellActions.resizeCell({ id: editingCell.id, geometry: { ...geometry, width: Math.ceil(width) } }));
+        if (editingCell.style.autoWidth) {
+          const { width } = calculateRectDom.getBoundingClientRect();
+          const geometry = editingCell.geometry as RectangleData;
+          dispatch(CellActions.resizeCell({ id: editingCell.id, geometry: { ...geometry, width: Math.ceil(width) } }));
+        } else if (editingCell.style.autoHeight) {
+          calculateRectDom.style.width = `${editingCell.geometry?.width}px`;
+          const { height } = calculateRectDom.getBoundingClientRect();
+          const geometry = editingCell.geometry as RectangleData;
+          dispatch(CellActions.resizeCell({ id: editingCell.id, geometry: { ...geometry, height: Math.ceil(height) } }));
+        }
         calculateRectDom.remove();
       }}
       onBlur={({ target }) => {

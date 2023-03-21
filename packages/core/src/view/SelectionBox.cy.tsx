@@ -22,7 +22,7 @@ describe('测试文本', () => {
     store = configureStore({ reducer: { cell: CellReduce } });
   });
 
-  it('调整宽度时, 将取消 autoWidth 样式', () => {
+  it('调整宽度时, 将取消 autoWidth 样式,并设置 autoHeight', () => {
     store.dispatch(
       CellActions.addText({ id: 'text1', text: 'Hello', style: { autoWidth: true }, geometry: { ...new Rectangle(10, 10, 70, 20) } }),
     );
@@ -34,7 +34,9 @@ describe('测试文本', () => {
       .mousemove(100, 20)
       .mouseup(100, 20)
       .then(() => {
-        chai.expect((store.getState() as RootState).cell.map['text1'].style.autoWidth).to.undefined;
+        const text = (store.getState() as RootState).cell.map['text1'];
+        chai.expect(text.style.autoWidth).to.undefined;
+        chai.expect(text.style.autoHeight).to.true;
       });
   });
 });

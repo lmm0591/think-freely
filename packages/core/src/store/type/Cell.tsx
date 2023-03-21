@@ -9,6 +9,7 @@ export type CellStyle = {
   startArrow?: ArrowType;
   fontColor?: string;
   autoWidth?: boolean;
+  autoHeight?: boolean;
   fontSize?: number;
 };
 export type CellData = {

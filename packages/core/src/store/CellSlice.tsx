@@ -211,6 +211,16 @@ export const CellSlice = createSlice({
       resizeRectCells(state, displayCells, oldDisplayRect, direction, vector);
       resizeLinePints(state, lineCells, oldDisplayRect, direction, vector);
     },
+    setSizeCells: (state, { payload }: PayloadAction<{ id: string; geometry?: RectangleData; points?: PointData[] }[]>) => {
+      payload.forEach(({ id, geometry, points }) => {
+        const cell = state.map[id];
+        if (cell) {
+          cell.geometry = geometry;
+          cell.points = points;
+          delete cell.style.autoWidth;
+        }
+      });
+    },
     resizeCell: (state, { payload: { id, geometry } }: PayloadAction<{ id: string; geometry: RectangleData }>) => {
       const cell = state.map[id];
       if (cell) {

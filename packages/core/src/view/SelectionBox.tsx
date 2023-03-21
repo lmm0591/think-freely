@@ -68,6 +68,24 @@ function ResizeLine({
         }
       }
     },
+    dragEndHandler: () => {
+      const state = store.getState() as RootState;
+      const { selectedCellIds } = state.cell;
+      const sizeCells = selectedCellIds.flatMap((id) => {
+        const cell = state.cell.map[id];
+        if (cell) {
+          return [
+            {
+              id: cell.id,
+              geometry: cell.geometry,
+              points: cell.points,
+            },
+          ];
+        }
+        return [];
+      });
+      dispatch(CellActions.setSizeCells(sizeCells));
+    },
   });
 
   return (

@@ -6,6 +6,7 @@ import { CellActions, CellReduce } from '../store/CellSlice';
 import { Rectangle } from '../model/Rectangle';
 import { DirectionFour } from './type/SelectionBox';
 import { Point } from '../model/Point';
+import { RootState } from '../store';
 
 const BedTest = ({ store }: { store: Store<unknown> }) => {
   return (
@@ -14,6 +15,29 @@ const BedTest = ({ store }: { store: Store<unknown> }) => {
     </Provider>
   );
 };
+
+describe('测试文本', () => {
+  let store: ToolkitStore;
+  beforeEach(() => {
+    store = configureStore({ reducer: { cell: CellReduce } });
+  });
+
+  it('调整宽度时, 将取消 autoWidth 样式', () => {
+    store.dispatch(
+      CellActions.addText({ id: 'text1', text: 'Hello', style: { autoWidth: true }, geometry: { ...new Rectangle(10, 10, 70, 20) } }),
+    );
+    store.dispatch(CellActions.selectDisplayCells(['text1']));
+    cy.mount(<BedTest store={store} />);
+
+    cy.get('body')
+      .mousedown(80, 20)
+      .mousemove(100, 20)
+      .mouseup(100, 20)
+      .then(() => {
+        chai.expect((store.getState() as RootState).cell.map['text1'].style.autoWidth).to.undefined;
+      });
+  });
+});
 
 describe('测试单选择框', () => {
   let store: ToolkitStore;

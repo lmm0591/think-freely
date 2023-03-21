@@ -13,16 +13,11 @@ export const Text = memo(({ cellId }: { cellId: string }) => {
   }
 
   return (
-    <g
-      className="mx-shape"
-      data-cell-id={textCell.id}
-      onClick={() => {
-        dispatch(CellActions.selectDisplayCells([cellId]));
-      }}
-      transform={`translate(${textCell.geometry.x}, ${textCell.geometry.y})`}
-    >
+    <g className="mx-shape" data-cell-id={textCell.id} transform={`translate(${textCell.geometry.x}, ${textCell.geometry.y})`}>
       <foreignObject
-        pointerEvents="none"
+        onClick={() => {
+          dispatch(CellActions.selectDisplayCells([cellId]));
+        }}
         style={{ userSelect: 'none', display: cellId === editId ? 'none' : '', wordBreak: 'break-all' }}
         width={textCell.geometry.width}
         height={textCell.geometry.height}

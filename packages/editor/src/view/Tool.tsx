@@ -47,12 +47,37 @@ export const ToolBar = () => {
     }
   };
 
+  const addText = (count: number) => {
+    const maxHeight = document.body.clientHeight / scale;
+    const maxWidth = document.body.clientWidth / scale;
+    for (let index = 0; index < count; index++) {
+      const x = Math.random() * maxWidth - translate.x / scale;
+      const y = Math.random() * maxHeight - translate.y / scale;
+      CellStore.dispatch(
+        CellActions.addText({
+          id: v4(),
+          text: 'Hello',
+          style: {
+            autoWidth: true,
+          },
+          geometry: {
+            x: Math.random() * maxWidth - translate.x / scale,
+            y: Math.random() * maxHeight - translate.y / scale,
+            width: 70,
+            height: 20,
+          },
+        }),
+      );
+    }
+  };
+
   return (
     <div>
       <input type="button" value="添加 1000 个元素" onClick={() => addSticky(1000)}></input>
       <input type="button" value="添加 10 个元素" onClick={() => addSticky(10)}></input>
       <input type="button" value="添加 1 个元素" onClick={() => addSticky(1)}></input>
       <input type="button" value="添加 10 个线条" onClick={() => addLine(10)}></input>
+      <input type="button" value="添加 10 个文本" onClick={() => addText(10)}></input>
     </div>
   );
 };

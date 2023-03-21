@@ -74,7 +74,7 @@ describe('测试文本元素', () => {
     );
     cy.mount(<BedTest store={store} />);
 
-    store.dispatch(CellActions.editCell('text1'));
+    store.dispatch(CellActions.editingCell('text1'));
 
     cy.get('.mxCellEditor').should('have.length', 1);
   });
@@ -83,7 +83,7 @@ describe('测试文本元素', () => {
     store.dispatch(
       CellActions.addText({ id: 'text1', text: 'Hello', style: { fontSize: 20 }, geometry: { x: 50, y: 50, width: 100, height: 30 } }),
     );
-    store.dispatch(CellActions.editCell('text1'));
+    store.dispatch(CellActions.editingCell('text1'));
     cy.mount(<BedTest store={store} />);
 
     cy.get("[data-cell-id='text1'] foreignObject").should('not.be.visible');

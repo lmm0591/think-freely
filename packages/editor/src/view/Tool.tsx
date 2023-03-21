@@ -58,7 +58,8 @@ export const ToolBar = () => {
           id: v4(),
           text: 'Hello',
           style: {
-            autoWidth: true,
+            autoWidth: false,
+            autoHeight: true,
           },
           geometry: {
             x: Math.random() * maxWidth - translate.x / scale,
@@ -74,10 +75,12 @@ export const ToolBar = () => {
   return (
     <div>
       <input type="button" value="添加 1000 个元素" onClick={() => addSticky(1000)}></input>
+      <input type="button" value="添加 100 个元素" onClick={() => addSticky(100)}></input>
       <input type="button" value="添加 10 个元素" onClick={() => addSticky(10)}></input>
       <input type="button" value="添加 1 个元素" onClick={() => addSticky(1)}></input>
       <input type="button" value="添加 10 个线条" onClick={() => addLine(10)}></input>
       <input type="button" value="添加 10 个文本" onClick={() => addText(10)}></input>
+      <input type="button" value="添加 100 个文本" onClick={() => addText(100)}></input>
     </div>
   );
 };

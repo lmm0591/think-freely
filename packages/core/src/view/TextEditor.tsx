@@ -28,25 +28,8 @@ export const TextEditor = memo(() => {
       suppressContentEditableWarning
       data-placeholder="输入文本…"
       ref={(event) => event?.focus()}
-      onInput={(event) => {
-        const calculateRectDom = document.createElement('div');
-        calculateRectDom.innerHTML = (event.target as HTMLDivElement).innerHTML || '';
-        calculateRectDom.style.display = 'inline-block';
-        calculateRectDom.style.fontSize = `${editingCell.style.fontSize}px`;
-        calculateRectDom.style.lineHeight = '1.2';
-        document.body.appendChild(calculateRectDom);
-        if (editingCell.style.autoWidth) {
-          const { width } = calculateRectDom.getBoundingClientRect();
-          const geometry = editingCell.geometry as RectangleData;
-          dispatch(CellActions.resizeCell({ id: editingCell.id, geometry: { ...geometry, width: Math.ceil(width) } }));
-        } else if (editingCell.style.autoHeight) {
-          calculateRectDom.style.width = `${editingCell.geometry?.width}px`;
-          calculateRectDom.style.wordBreak = 'break-word';
-          const { height } = calculateRectDom.getBoundingClientRect();
-          const geometry = editingCell.geometry as RectangleData;
-          dispatch(CellActions.resizeCell({ id: editingCell.id, geometry: { ...geometry, height: Math.ceil(height) } }));
-        }
-        calculateRectDom.remove();
+      onInput={({ target }) => {
+        dispatch(CellActions.editCell({ id: editingCell.id, text: (target as HTMLDivElement).innerText }));
       }}
       onBlur={({ target }) => {
         if (target.innerText !== editingCell.text) {

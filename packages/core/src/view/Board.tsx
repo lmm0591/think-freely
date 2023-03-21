@@ -27,13 +27,9 @@ export const Board = () => {
   useEventListener('dblclick', (event) => {
     const target = event.composedPath()[0] as HTMLElement;
     if (target.classList.contains('mx-selection-box') && selectedCellIds.length === 1) {
-      dispatch(CellActions.editCell(selectedCellIds[0]));
+      dispatch(CellActions.editingCell(selectedCellIds[0]));
     }
   });
-
-  /*
-  
-  */
 
   useDND(ref, {
     dragStartHandler: () => {

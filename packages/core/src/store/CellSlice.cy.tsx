@@ -14,7 +14,7 @@ const {
   selectGroup,
   translate,
   scale,
-  editCell,
+  editingCell,
   finishEditing,
   addLine,
   resizeLine,
@@ -103,7 +103,7 @@ describe('测试 CellSlice', () => {
 
   it('当调用 clearSelected 时，取消正在编辑的元素', () => {
     let store = reducer(initialState, addSticky({ id: 'cell1', geometry: { x: 0, y: 0, width: 100, height: 100 } }));
-    store = reducer(store, editCell('cell1'));
+    store = reducer(store, editingCell('cell1'));
     store = reducer(store, clearSelected());
 
     chai.expect(store.operate.editId).to.eq(undefined);
@@ -111,7 +111,7 @@ describe('测试 CellSlice', () => {
 
   it('当调用 finishEditing 时，保存元素的文本', () => {
     let store = reducer(initialState, addSticky({ id: 'cell1', geometry: { x: 0, y: 0, width: 100, height: 100 } }));
-    store = reducer(store, editCell('cell1'));
+    store = reducer(store, editingCell('cell1'));
     store = reducer(store, finishEditing({ cellId: 'cell1', text: 'ThinkFreely' }));
 
     chai.expect(store.map.cell1.text).to.eq('ThinkFreely');
@@ -119,7 +119,7 @@ describe('测试 CellSlice', () => {
 
   it('当调用 finishEditing 时，退出编辑态', () => {
     let store = reducer(initialState, addSticky({ id: 'cell1', geometry: { x: 0, y: 0, width: 100, height: 100 } }));
-    store = reducer(store, editCell('cell1'));
+    store = reducer(store, editingCell('cell1'));
     store = reducer(store, finishEditing({ cellId: 'cell1', text: 'ThinkFreely' }));
 
     chai.expect(store.operate.editId).to.undefined;
@@ -565,16 +565,16 @@ describe('测试 CellSlice', () => {
   });
 
   describe('测试编辑元素', () => {
-    it('当调用 editCell 函数入参为 "cell1"时，CellState 中 operate.editId 就设置成 cell1', () => {
+    it('当调用 editingCell 函数入参为 "cell1"时，CellState 中 operate.editId 就设置成 cell1', () => {
       let store = reducer(initialState, addSticky({ id: 'cell1', geometry: { x: 50, y: 50, width: 100, height: 100 } }));
-      store = reducer(store, editCell('cell1'));
+      store = reducer(store, editingCell('cell1'));
 
       chai.expect(store.operate.editId).eql('cell1');
     });
 
     it('当编辑的元素不存在时，则设置失败', () => {
       let store = reducer(initialState, addSticky({ id: 'cell1', geometry: { x: 50, y: 50, width: 100, height: 100 } }));
-      store = reducer(store, editCell('cell2'));
+      store = reducer(store, editingCell('cell2'));
 
       chai.expect(store.operate.editId).eql(undefined);
     });

@@ -6,7 +6,11 @@ import { Rectangle } from '../model/Rectangle';
 import { DirectionFour } from '../view/type/SelectionBox';
 import { getSelectedCellGeometry } from './CellSelector';
 import { CellData, CellStyle, GeometryCellData, PointCellData, PointData, RectangleData } from './type/Cell';
-
+const calculateRectDom = document.createElement('div');
+calculateRectDom.style.display = 'inline-block';
+calculateRectDom.style.lineHeight = '1.2';
+calculateRectDom.style.wordBreak = 'break-word';
+calculateRectDom.style.zIndex = '9';
 export interface CellState {
   selectedCellIds: string[];
   map: Record<string, CellData>;
@@ -94,6 +98,8 @@ function resizeRectCells(
   direction: DirectionFour,
   vector: number,
 ) {
+  document.body.appendChild(calculateRectDom);
+
   displayCells.forEach((cell) => {
     const stateCell = state.map[cell.id];
     if (stateCell?.geometry === undefined) {
@@ -112,7 +118,19 @@ function resizeRectCells(
       stateCell.geometry.y = y;
       stateCell.geometry.height = height;
     }
+
+    if (stateCell.style.autoHeight) {
+      calculateRectDom.innerHTML = stateCell.text ?? '';
+      calculateRectDom.style.fontSize = `${stateCell.style.fontSize}px`;
+      calculateRectDom.style.width = `${stateCell.geometry?.width}px`;
+      const height = calculateRectDom.getBoundingClientRect().height;
+      stateCell.geometry.height = height;
+    }
+    delete stateCell.style.autoWidth;
+    stateCell.type === 'TEXT' && (stateCell.style.autoHeight = true);
   });
+
+  calculateRectDom.remove();
 }
 
 export const CellSlice = createSlice({
@@ -211,23 +229,6 @@ export const CellSlice = createSlice({
       resizeRectCells(state, displayCells, oldDisplayRect, direction, vector);
       resizeLinePints(state, lineCells, oldDisplayRect, direction, vector);
     },
-    setSizeCells: (state, { payload }: PayloadAction<{ id: string; geometry?: RectangleData; points?: PointData[] }[]>) => {
-      payload.forEach(({ id, geometry, points }) => {
-        const cell = state.map[id];
-        if (cell) {
-          cell.geometry = geometry;
-          cell.points = points;
-          delete cell.style.autoWidth;
-          cell.style.autoHeight = true;
-        }
-      });
-    },
-    resizeCell: (state, { payload: { id, geometry } }: PayloadAction<{ id: string; geometry: RectangleData }>) => {
-      const cell = state.map[id];
-      if (cell) {
-        cell.geometry = geometry;
-      }
-    },
     resizeLine: (state, { payload }: PayloadAction<{ id: string; points: PointData[] }>) => {
       if (state.map[payload.id] === undefined || payload.points?.length < 2) {
         return;
@@ -254,11 +255,33 @@ export const CellSlice = createSlice({
     operateRubberBand: (state, { payload }: PayloadAction<boolean>) => {
       state.operate.rubberBand = payload;
     },
-    editCell: (state, { payload }: PayloadAction<string>) => {
+    editingCell: (state, { payload }: PayloadAction<string>) => {
       if (state.map[payload]) {
         state.operate.editId = payload;
       } else {
         state.operate.editId = undefined;
+      }
+    },
+    editCell: (state, { payload }: PayloadAction<{ id: string; text: string }>) => {
+      const stateCell = state.map[payload.id];
+      if (stateCell) {
+        stateCell.text = payload.text;
+        if (stateCell.style.autoWidth) {
+          document.body.appendChild(calculateRectDom);
+          calculateRectDom.innerHTML = stateCell.text ?? '';
+          calculateRectDom.style.fontSize = `${stateCell.style.fontSize}px`;
+          const width = calculateRectDom.getBoundingClientRect().width;
+          (stateCell.geometry as RectangleData).width = width;
+          calculateRectDom.remove();
+        } else if (stateCell.style.autoHeight) {
+          document.body.appendChild(calculateRectDom);
+          calculateRectDom.innerHTML = stateCell.text ?? '';
+          calculateRectDom.style.fontSize = `${stateCell.style.fontSize}px`;
+          calculateRectDom.style.width = `${stateCell.geometry?.width}px`;
+          const height = calculateRectDom.getBoundingClientRect().height;
+          (stateCell.geometry as RectangleData).height = height;
+          calculateRectDom.remove();
+        }
       }
     },
     createGroup(state, { payload: { id, children } }: PayloadAction<{ id: string; children: string[] }>) {

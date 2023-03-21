@@ -33,6 +33,7 @@ export const TextEditor = memo(() => {
         calculateRectDom.innerHTML = (event.target as HTMLDivElement).innerHTML || '';
         calculateRectDom.style.display = 'inline-block';
         calculateRectDom.style.fontSize = `${editingCell.style.fontSize}px`;
+        calculateRectDom.style.lineHeight = '1.2';
         document.body.appendChild(calculateRectDom);
         if (editingCell.style.autoWidth) {
           const { width } = calculateRectDom.getBoundingClientRect();
@@ -40,6 +41,7 @@ export const TextEditor = memo(() => {
           dispatch(CellActions.resizeCell({ id: editingCell.id, geometry: { ...geometry, width: Math.ceil(width) } }));
         } else if (editingCell.style.autoHeight) {
           calculateRectDom.style.width = `${editingCell.geometry?.width}px`;
+          calculateRectDom.style.wordBreak = 'break-word';
           const { height } = calculateRectDom.getBoundingClientRect();
           const geometry = editingCell.geometry as RectangleData;
           dispatch(CellActions.resizeCell({ id: editingCell.id, geometry: { ...geometry, height: Math.ceil(height) } }));
@@ -57,6 +59,7 @@ export const TextEditor = memo(() => {
         fontSize: `${editingCell.style.fontSize}px`,
         zIndex: 1,
         position: 'absolute',
+        wordBreak: 'break-word',
         width: `${editingCell.geometry.width}px`,
         height: `${editingCell.geometry.height}px`,
         left: `${geometry.x}px`,

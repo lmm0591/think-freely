@@ -18,7 +18,7 @@ export const Text = memo(({ cellId }: { cellId: string }) => {
         onClick={() => {
           dispatch(CellActions.selectDisplayCells([cellId]));
         }}
-        style={{ userSelect: 'none', display: cellId === editId ? 'none' : '', wordBreak: 'break-all' }}
+        style={{ userSelect: 'none', display: cellId === editId ? 'none' : '', wordBreak: 'break-word', lineHeight: 1.2 }}
         width={textCell.geometry.width}
         height={textCell.geometry.height}
       >

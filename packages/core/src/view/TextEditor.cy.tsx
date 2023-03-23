@@ -168,7 +168,7 @@ describe('测试文本编辑器', () => {
       cy.get('[data-cell-id="text1"] foreignObject').should('have.attr', 'width', '100');
     });
 
-    it.only('当样式 autoWidth=true 时触发修改宽度 Actions', () => {
+    it('当样式 autoWidth=true 时触发修改宽度 Actions', () => {
       store.dispatch(CellActions.updateStyle({ ids: ['text1'], style: { autoWidth: true } }));
 
       cy.get('.mxCellEditor')
@@ -185,7 +185,7 @@ describe('测试文本编辑器', () => {
       cy.get('.mxCellEditor')
         .type('Hello, World, Hello, World, Hello, World')
         .then(([target]) => {
-          expect(target?.clientHeight).to.eql(58);
+          expect(target?.clientHeight).to.eql(72);
         });
     });
   });

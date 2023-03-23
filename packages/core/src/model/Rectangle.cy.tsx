@@ -248,4 +248,30 @@ describe('测试 Rectangle', () => {
       });
     });
   });
+
+  describe('测试 getPointByDirection 方法', () => {
+    it('测试矩形的上边', () => {
+      const rectangle = new Rectangle(50, 50, 100, 100);
+      const point = rectangle.getPointByDirection('N');
+      chai.expect(point).contains({ x: 100, y: 50 });
+    });
+
+    it('测试矩形的右边', () => {
+      const rectangle = new Rectangle(50, 50, 100, 100);
+      const point = rectangle.getPointByDirection('E');
+      chai.expect(point).contains({ x: 150, y: 100 });
+    });
+
+    it('测试矩形的下边', () => {
+      const rectangle = new Rectangle(50, 50, 100, 100);
+      const point = rectangle.getPointByDirection('S');
+      chai.expect(point).contains({ x: 100, y: 150 });
+    });
+
+    it('测试矩形的左边', () => {
+      const rectangle = new Rectangle(50, 50, 100, 100);
+      const point = rectangle.getPointByDirection('W');
+      chai.expect(point).contains({ x: 50, y: 100 });
+    });
+  });
 });

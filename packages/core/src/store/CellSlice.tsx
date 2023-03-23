@@ -232,10 +232,11 @@ export const CellSlice = createSlice({
       resizeLinePints(state, lineCells, oldDisplayRect, direction, vector);
     },
     resizeLine: (state, { payload }: PayloadAction<{ id: string; points: PointData[] }>) => {
-      if (state.map[payload.id] === undefined || !validatePoints(state.map[payload.id])) {
+      const line = state.map[payload.id];
+      if (line === undefined || !validatePoints({ ...payload, source: line.source, target: line.target })) {
         return;
       }
-      state.map[payload.id].points = payload.points;
+      line.points = payload.points;
     },
     moveCell: (state, { payload }: PayloadAction<{ id: string; point: PointData }>) => {
       const cell = state.map[payload.id];

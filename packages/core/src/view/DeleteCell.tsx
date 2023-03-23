@@ -7,7 +7,7 @@ import { RootState } from '../store';
 export const DeleteCell = memo(() => {
   const dispatch = useDispatch();
   const store = useStore();
-  useKeyPress('backspace', () => {
+  useKeyPress(['backspace', 'delete'], () => {
     const { selectedCellIds } = (store.getState() as RootState).cell;
     dispatch(CellActions.deleteCells({ cellIds: selectedCellIds }));
   });

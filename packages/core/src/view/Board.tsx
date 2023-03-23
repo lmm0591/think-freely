@@ -16,6 +16,7 @@ import { Line } from './Line';
 import { ArrowDefs } from './ArrowDefs';
 import { Zoom } from './Zoom';
 import { Text } from './Text';
+import { DeleteCell } from './DeleteCell';
 
 export const Board = () => {
   const cells = useSelector((state: RootState) => Object.values(state.cell.map));
@@ -65,8 +66,8 @@ export const Board = () => {
       <svg
         style={{
           left: 0,
-          top: 0,
           width: '100%',
+          top: 0,
           height: '100%',
           display: 'block',
         }}
@@ -93,6 +94,7 @@ export const Board = () => {
       </svg>
       <RubberBand rect={rubberBandRect}></RubberBand>
       <TextEditor></TextEditor>
+      <DeleteCell></DeleteCell>
       <Zoom></Zoom>
     </>
   );

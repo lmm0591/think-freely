@@ -58,8 +58,7 @@ export const ToolBar = () => {
           id: v4(),
           text: 'Hello',
           style: {
-            autoWidth: false,
-            autoHeight: true,
+            autoWidth: true,
           },
           geometry: {
             x: Math.random() * maxWidth - translate.x / scale,

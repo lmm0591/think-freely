@@ -7,7 +7,7 @@ import { Rectangle } from '../model/Rectangle';
 import { DirectionFour } from '../view/type/SelectionBox';
 import { getSelectedCellGeometry } from './CellSelector';
 import { CellData, CellStyle, GeometryCellData, PointCellData, PointData, RectangleData } from './type/Cell';
-import { CalculateRectDom } from '../lib/CalculateRectDom';
+import { CalculateHeightDom, CalculateWidthDom } from '../lib/CalculateRectDom';
 
 export interface CellState {
   selectedCellIds: string[];
@@ -116,7 +116,7 @@ function resizeRectCells(
     }
 
     if (stateCell.style.autoHeight) {
-      const { height } = CalculateRectDom(stateCell?.text, stateCell.style);
+      const height = CalculateHeightDom(stateCell.geometry.width, stateCell?.text, stateCell.style);
       stateCell.geometry.height = height;
     }
     delete stateCell.style.autoWidth;
@@ -257,11 +257,10 @@ export const CellSlice = createSlice({
       const stateCell = state.map[payload.id];
       if (stateCell) {
         stateCell.text = payload.text;
-        const { width, height } = CalculateRectDom(stateCell.text, stateCell.style);
-        if (stateCell.style.autoWidth) {
-          (stateCell.geometry as RectangleData).width = width;
-        } else if (stateCell.style.autoHeight) {
-          (stateCell.geometry as RectangleData).height = height;
+        if (stateCell.style.autoWidth && stateCell.geometry) {
+          stateCell.geometry.width = CalculateWidthDom(stateCell.text, stateCell.style);
+        } else if (stateCell.style.autoHeight && stateCell.geometry) {
+          stateCell.geometry.height = CalculateHeightDom(stateCell.geometry.width, stateCell.text, stateCell.style);
         }
       }
     },

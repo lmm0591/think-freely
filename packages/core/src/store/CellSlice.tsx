@@ -7,11 +7,8 @@ import { Rectangle } from '../model/Rectangle';
 import { DirectionFour } from '../view/type/SelectionBox';
 import { getSelectedCellGeometry } from './CellSelector';
 import { CellData, CellStyle, GeometryCellData, PointCellData, PointData, RectangleData } from './type/Cell';
-const calculateRectDom = document.createElement('div');
-calculateRectDom.style.display = 'inline-block';
-calculateRectDom.style.lineHeight = '1.2';
-calculateRectDom.style.wordBreak = 'break-word';
-calculateRectDom.style.zIndex = '9';
+import { CalculateRectDom } from '../lib/CalculateRectDom';
+
 export interface CellState {
   selectedCellIds: string[];
   map: Record<string, CellData>;
@@ -99,8 +96,6 @@ function resizeRectCells(
   direction: DirectionFour,
   vector: number,
 ) {
-  document.body.appendChild(calculateRectDom);
-
   displayCells.forEach((cell) => {
     const stateCell = state.map[cell.id];
     if (stateCell?.geometry === undefined) {
@@ -121,17 +116,12 @@ function resizeRectCells(
     }
 
     if (stateCell.style.autoHeight) {
-      calculateRectDom.innerHTML = stateCell.text ?? '';
-      calculateRectDom.style.fontSize = `${stateCell.style.fontSize}px`;
-      calculateRectDom.style.width = `${stateCell.geometry?.width}px`;
-      const height = calculateRectDom.getBoundingClientRect().height;
+      const { height } = CalculateRectDom(stateCell?.text, stateCell.style);
       stateCell.geometry.height = height;
     }
     delete stateCell.style.autoWidth;
     stateCell.type === 'TEXT' && (stateCell.style.autoHeight = true);
   });
-
-  calculateRectDom.remove();
 }
 
 export const CellSlice = createSlice({
@@ -267,22 +257,11 @@ export const CellSlice = createSlice({
       const stateCell = state.map[payload.id];
       if (stateCell) {
         stateCell.text = payload.text;
-        // TODO:重构
+        const { width, height } = CalculateRectDom(stateCell.text, stateCell.style);
         if (stateCell.style.autoWidth) {
-          document.body.appendChild(calculateRectDom);
-          calculateRectDom.innerHTML = stateCell.text ?? '';
-          calculateRectDom.style.fontSize = `${stateCell.style.fontSize}px`;
-          const width = calculateRectDom.getBoundingClientRect().width;
           (stateCell.geometry as RectangleData).width = width;
-          calculateRectDom.remove();
         } else if (stateCell.style.autoHeight) {
-          document.body.appendChild(calculateRectDom);
-          calculateRectDom.innerHTML = stateCell.text ?? '';
-          calculateRectDom.style.fontSize = `${stateCell.style.fontSize}px`;
-          calculateRectDom.style.width = `${stateCell.geometry?.width}px`;
-          const height = calculateRectDom.getBoundingClientRect().height;
           (stateCell.geometry as RectangleData).height = height;
-          calculateRectDom.remove();
         }
       }
     },

@@ -1,5 +1,6 @@
 import { Point } from '../../model/Point';
 import { Rectangle } from '../../model/Rectangle';
+import { DirectionFour } from '../../view/type/SelectionBox';
 
 export type RectangleData = Pick<Rectangle, 'x' | 'y' | 'width' | 'height'>;
 export type CellType = 'STICKY' | 'GROUP' | 'LINE' | 'TEXT';
@@ -17,6 +18,14 @@ export type CellData = {
   text?: string;
   geometry?: RectangleData;
   points?: PointData[];
+  source?: {
+    id: string;
+    direction: DirectionFour;
+  };
+  target?: {
+    id: string;
+    direction: DirectionFour;
+  };
   style: CellStyle;
   children: string[];
   groupId?: string;

@@ -168,6 +168,19 @@ export class Rectangle extends Point {
     return this;
   }
 
+  getPointByDirection(direction: DirectionFour): Point {
+    if (direction === 'E') {
+      return this.getPointRight();
+    } else if (direction === 'S') {
+      return this.getPointBottom();
+    } else if (direction === 'W') {
+      return this.getPointLeft();
+    } else if (direction === 'N') {
+      return this.getPointTop();
+    }
+    return this.getCenterPoint();
+  }
+
   /**
    * 设置 left 会影响 width 与 x
    */
@@ -244,5 +257,9 @@ export class Rectangle extends Point {
 
   set centerY(value: number) {
     this.y = value - this.height / 2;
+  }
+
+  getCenterPoint(): Point {
+    return new Point(this.centerX, this.centerY);
   }
 }

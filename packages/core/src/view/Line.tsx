@@ -3,11 +3,12 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useDND } from '../hook/useDND';
 import { RootState } from '../store';
 import { CellActions } from '../store/CellSlice';
+import { Rectangle } from '../model/Rectangle';
 
 export const Line = memo(({ cellId }: { cellId: string }) => {
   const dispatch = useDispatch();
   const lineCell = useSelector((state: RootState) => state.cell.map[cellId]);
-  const { translate, scale } = useSelector((state: RootState) => state.cell);
+  const { translate, scale, map } = useSelector((state: RootState) => state.cell);
 
   const ref = useRef(null);
   useDND(ref, {
@@ -24,7 +25,18 @@ export const Line = memo(({ cellId }: { cellId: string }) => {
       );
     },
   });
-  const points = lineCell.points;
+
+  const points = [];
+  if (lineCell.source) {
+    const geometry = map[lineCell.source.id]?.geometry;
+    if (geometry) {
+      const { x, y } = Rectangle.from(geometry).getPointByDirection(lineCell.source.direction);
+      points.push({ x, y });
+    }
+  }
+
+  points.push(...(lineCell.points || []));
+
   if (points === undefined || (points && points.length < 2)) {
     return <></>;
   }

@@ -124,6 +124,17 @@ function resizeRectCells(
   });
 }
 
+function validatePoints(cell: Pick<CellData, 'points' | 'source' | 'target'>): boolean {
+  let pointCount = cell.points?.length || 0;
+  pointCount += cell.source ? 1 : 0;
+  pointCount += cell.target ? 1 : 0;
+
+  if (cell.points === undefined || pointCount < 2) {
+    return false;
+  }
+  return true;
+}
+
 export const CellSlice = createSlice({
   name: 'Cell',
   initialState,
@@ -139,7 +150,7 @@ export const CellSlice = createSlice({
       };
     },
     addLine: (state, { payload }: PayloadAction<Omit<CellData, 'type' | 'children' | 'style'> & { style?: CellStyle }>) => {
-      if (payload.points === undefined || payload.points.length < 2) {
+      if (!validatePoints(payload)) {
         return;
       }
       state.map[payload.id] = { style: {}, ...payload, type: 'LINE', children: [] };
@@ -221,7 +232,7 @@ export const CellSlice = createSlice({
       resizeLinePints(state, lineCells, oldDisplayRect, direction, vector);
     },
     resizeLine: (state, { payload }: PayloadAction<{ id: string; points: PointData[] }>) => {
-      if (state.map[payload.id] === undefined || payload.points?.length < 2) {
+      if (state.map[payload.id] === undefined || !validatePoints(state.map[payload.id])) {
         return;
       }
       state.map[payload.id].points = payload.points;
@@ -302,7 +313,14 @@ export const CellSlice = createSlice({
       }
     },
     deleteCells(state, { payload: { cellIds } }: PayloadAction<{ cellIds: string[] }>) {
+      const connectLines = Object.values(state.map).filter((cell) => cell.type === 'LINE' && (cell.source || cell.target));
       cellIds.forEach((cellId) => {
+        connectLines.forEach((line) => {
+          if (line.source?.id === cellId || line.target?.id === cellId) {
+            delete state.map[line.id];
+            state.selectedCellIds = difference(state.selectedCellIds, [line.id]);
+          }
+        });
         delete state.map[cellId];
       });
       state.selectedCellIds = difference(state.selectedCellIds, cellIds);

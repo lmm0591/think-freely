@@ -1,5 +1,6 @@
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
+import difference from 'lodash.difference';
 import { Line } from '../model/Line';
 import { Point } from '../model/Point';
 import { Rectangle } from '../model/Rectangle';
@@ -266,6 +267,7 @@ export const CellSlice = createSlice({
       const stateCell = state.map[payload.id];
       if (stateCell) {
         stateCell.text = payload.text;
+        // TODO:重构
         if (stateCell.style.autoWidth) {
           document.body.appendChild(calculateRectDom);
           calculateRectDom.innerHTML = stateCell.text ?? '';
@@ -320,6 +322,12 @@ export const CellSlice = createSlice({
         state.map[cellId].text = text;
         state.operate.editId = undefined;
       }
+    },
+    deleteCells(state, { payload: { cellIds } }: PayloadAction<{ cellIds: string[] }>) {
+      cellIds.forEach((cellId) => {
+        delete state.map[cellId];
+      });
+      state.selectedCellIds = difference(state.selectedCellIds, cellIds);
     },
   },
 });

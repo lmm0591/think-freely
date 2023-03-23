@@ -18,6 +18,7 @@ const {
   finishEditing,
   addLine,
   resizeLine,
+  deleteCells,
 } = CellActions;
 
 describe('测试 CellSlice', () => {
@@ -85,6 +86,14 @@ describe('测试 CellSlice', () => {
       let store = reducer(initialState, addLine({ id: 'cell1', points: [] }));
       chai.expect(store.map['cell1']).to.undefined;
     });
+  });
+
+  it('当调用 deleteCells 时,删除元素', () => {
+    let store = reducer(initialState, addSticky({ id: 'cell1', geometry: { x: 0, y: 0, width: 100, height: 100 } }));
+    store = reducer(store, selectDisplayCells(['cell1']));
+    store = reducer(store, deleteCells({ cellIds: ['cell1'] }));
+    chai.expect(store.selectedCellIds).eqls([]);
+    chai.expect(store.map['cell1']).to.undefined;
   });
 
   it('当调用 selectDisplayCells 时，将选中一个便利贴', () => {

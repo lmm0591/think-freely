@@ -17,6 +17,7 @@ import { ArrowDefs } from './ArrowDefs';
 import { Zoom } from './Zoom';
 import { Text } from './Text';
 import { DeleteCell } from './DeleteCell';
+import { Connector } from './Connector';
 
 export const Board = () => {
   const cells = useSelector((state: RootState) => Object.values(state.cell.map));
@@ -90,6 +91,7 @@ export const Board = () => {
         <g className="mx-overlay">
           <SelectionBox></SelectionBox>
           <SelectionLine></SelectionLine>
+          <Connector></Connector>
         </g>
       </svg>
       <RubberBand rect={rubberBandRect}></RubberBand>

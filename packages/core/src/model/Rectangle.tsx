@@ -181,6 +181,22 @@ export class Rectangle extends Point {
     return this.getCenterPoint();
   }
 
+  grow(amount: number) {
+    return this.growX(amount).growY(amount);
+  }
+
+  growX(amount: number) {
+    this.x -= amount;
+    this.width += 2 * amount;
+    return this;
+  }
+
+  growY(amount: number) {
+    this.y -= amount;
+    this.height += 2 * amount;
+    return this;
+  }
+
   /**
    * 设置 left 会影响 width 与 x
    */

@@ -129,7 +129,7 @@ function validatePoints(cell: Pick<CellData, 'points' | 'source' | 'target'>): b
   pointCount += cell.source ? 1 : 0;
   pointCount += cell.target ? 1 : 0;
 
-  if (cell.points === undefined || pointCount < 2) {
+  if (pointCount < 2) {
     return false;
   }
   return true;

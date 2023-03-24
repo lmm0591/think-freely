@@ -137,6 +137,42 @@ describe('测试线条', () => {
         chai.expect((store.getState() as RootState).cell.selectedCellIds).to.length(0);
       });
     });
+
+    describe('线条的起点和终点都连接到便利贴', () => {
+      beforeEach(() => {
+        store.dispatch(CellActions.addSticky({ id: 'cell1', geometry: { x: 50, y: 50, width: 100, height: 100 } }));
+        store.dispatch(CellActions.addSticky({ id: 'cell2', geometry: { x: 300, y: 200, width: 100, height: 100 } }));
+
+        store.dispatch(
+          CellActions.addLine({
+            id: 'line1',
+            source: {
+              id: 'cell1',
+              direction: 'E',
+            },
+            target: {
+              id: 'cell2',
+              direction: 'W',
+            },
+          }),
+        );
+        cy.mount(<BedTest store={store} />);
+      });
+
+      it('连接后的显示', () => {
+        cy.get('[data-cell-id="line1"] polyline').should('have.attr', 'points', '150,100 300,250');
+      });
+
+      it('删除起点便利贴时线条也删除', () => {
+        store.dispatch(CellActions.deleteCells({ cellIds: ['cell1'] }));
+        chai.expect((store.getState() as RootState).cell.map['line1']).to.undefined;
+      });
+
+      it('删除终点便利贴时线条也删除', () => {
+        store.dispatch(CellActions.deleteCells({ cellIds: ['cell2'] }));
+        chai.expect((store.getState() as RootState).cell.map['line1']).to.undefined;
+      });
+    });
   });
 
   describe('测试移动线条场景', () => {

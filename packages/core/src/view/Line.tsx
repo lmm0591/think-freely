@@ -38,14 +38,14 @@ export const Line = memo(({ cellId }: { cellId: string }) => {
   const points = [];
   if (lineCell.source) {
     const point = getConnectorPoint(map, lineCell.source.id, lineCell?.source.direction);
-    points.push(point);
+    point && points.push(point);
   }
 
   points.push(...(lineCell.points || []));
 
   if (lineCell.target) {
     const point = getConnectorPoint(map, lineCell.target.id, lineCell?.target.direction);
-    points.push(point);
+    point && points.push(point);
   }
 
   if (points === undefined || (points && points.length < 2)) {

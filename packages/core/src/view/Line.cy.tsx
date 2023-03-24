@@ -48,47 +48,94 @@ describe('测试线条', () => {
   });
 
   describe('测试便利贴与线条连接后场景', () => {
-    beforeEach(() => {
-      store.dispatch(CellActions.addSticky({ id: 'cell1', geometry: { x: 50, y: 50, width: 100, height: 100 } }));
-      store.dispatch(
-        CellActions.addLine({
-          id: 'line1',
-          source: {
-            id: 'cell1',
-            direction: 'E',
-          },
-          points: [{ x: 200, y: 200 }],
-        }),
-      );
-      cy.mount(<BedTest store={store} />);
+    describe('线条的起点连接到便利贴', () => {
+      beforeEach(() => {
+        store.dispatch(CellActions.addSticky({ id: 'cell1', geometry: { x: 50, y: 50, width: 100, height: 100 } }));
+        store.dispatch(
+          CellActions.addLine({
+            id: 'line1',
+            source: {
+              id: 'cell1',
+              direction: 'E',
+            },
+            points: [{ x: 200, y: 200 }],
+          }),
+        );
+        cy.mount(<BedTest store={store} />);
+      });
+
+      it('连接后的显示', () => {
+        cy.get('[data-cell-id="line1"] polyline').should('have.attr', 'points', '150,100 200,200');
+      });
+
+      it('移动便利贴', () => {
+        cy.get('[data-cell-id="cell1"]').mousedown(20, 20);
+        cy.get('body').mousemove(150, 70).mouseup(150, 70);
+        cy.get('[data-cell-id="line1"] polyline').should('have.attr', 'points', '230,100 200,200');
+      });
+
+      it('移动线条终点', () => {
+        cy.get('[data-cell-id="line1"]').click();
+        cy.get('[data-resizer-line]').mousedown(2, 2);
+        cy.get('body').mousemove(250, 170).mouseup(250, 170);
+        cy.get('[data-cell-id="line1"] polyline').should('have.attr', 'points', '150,100 250,170');
+      });
+
+      it('删除便利贴时线条也删除', () => {
+        store.dispatch(CellActions.deleteCells({ cellIds: ['cell1'] }));
+        chai.expect((store.getState() as RootState).cell.map['line1']).to.undefined;
+      });
+
+      it('当选中的线条被动删除时,会取消线条的选中态', () => {
+        store.dispatch(CellActions.selectDisplayCells(['line1']));
+        store.dispatch(CellActions.deleteCells({ cellIds: ['cell1'] }));
+        chai.expect((store.getState() as RootState).cell.selectedCellIds).to.length(0);
+      });
     });
 
-    it('连接后的显示', () => {
-      cy.get('[data-cell-id="line1"] polyline').should('have.attr', 'points', '150,100 200,200');
-    });
+    describe('线条的终点连接到便利贴', () => {
+      beforeEach(() => {
+        store.dispatch(CellActions.addSticky({ id: 'cell1', geometry: { x: 200, y: 200, width: 100, height: 100 } }));
+        store.dispatch(
+          CellActions.addLine({
+            id: 'line1',
+            target: {
+              id: 'cell1',
+              direction: 'W',
+            },
+            points: [{ x: 100, y: 100 }],
+          }),
+        );
+        cy.mount(<BedTest store={store} />);
+      });
 
-    it('移动便利贴', () => {
-      cy.get('[data-cell-id="cell1"]').mousedown(20, 20);
-      cy.get('body').mousemove(150, 70).mouseup(150, 70);
-      cy.get('[data-cell-id="line1"] polyline').should('have.attr', 'points', '230,100 200,200');
-    });
+      it('连接后的显示', () => {
+        cy.get('[data-cell-id="line1"] polyline').should('have.attr', 'points', '100,100 200,250');
+      });
 
-    it('移动线条终点', () => {
-      cy.get('[data-cell-id="line1"]').click();
-      cy.get('[data-resizer-line]').mousedown(2, 2);
-      cy.get('body').mousemove(250, 170).mouseup(250, 170);
-      cy.get('[data-cell-id="line1"] polyline').should('have.attr', 'points', '150,100 250,170');
-    });
+      it('移动便利贴', () => {
+        cy.get('[data-cell-id="cell1"]').mousedown(20, 20);
+        cy.get('body').mousemove(320, 220).mouseup(320, 220);
+        cy.get('[data-cell-id="line1"] polyline').should('have.attr', 'points', '100,100 300,250');
+      });
 
-    it('删除便利贴时线条也删除', () => {
-      store.dispatch(CellActions.deleteCells({ cellIds: ['cell1'] }));
-      chai.expect((store.getState() as RootState).cell.map['line1']).to.undefined;
-    });
+      it('移动线条始点', () => {
+        cy.get('[data-cell-id="line1"]').click();
+        cy.get('[data-resizer-line]').mousedown(2, 2);
+        cy.get('body').mousemove(150, 50).mouseup(150, 50);
+        cy.get('[data-cell-id="line1"] polyline').should('have.attr', 'points', '150,50 200,250');
+      });
 
-    it('当选中的线条被动删除时,会取消线条的选中态', () => {
-      store.dispatch(CellActions.selectDisplayCells(['line1']));
-      store.dispatch(CellActions.deleteCells({ cellIds: ['cell1'] }));
-      chai.expect((store.getState() as RootState).cell.selectedCellIds).to.length(0);
+      it('删除便利贴时线条也删除', () => {
+        store.dispatch(CellActions.deleteCells({ cellIds: ['cell1'] }));
+        chai.expect((store.getState() as RootState).cell.map['line1']).to.undefined;
+      });
+
+      it('当选中的线条被动删除时,会取消线条的选中态', () => {
+        store.dispatch(CellActions.selectDisplayCells(['line1']));
+        store.dispatch(CellActions.deleteCells({ cellIds: ['cell1'] }));
+        chai.expect((store.getState() as RootState).cell.selectedCellIds).to.length(0);
+      });
     });
   });
 

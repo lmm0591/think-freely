@@ -4,6 +4,15 @@ import { useDND } from '../hook/useDND';
 import { RootState } from '../store';
 import { CellActions } from '../store/CellSlice';
 import { Rectangle } from '../model/Rectangle';
+import { DirectionFour } from './type/SelectionBox';
+import { CellData } from '../store/type/Cell';
+
+function getConnectorPoint(cellStore: Record<string, CellData>, cellId: string, direction: DirectionFour) {
+  const geometry = cellStore[cellId]?.geometry;
+  if (geometry) {
+    return Rectangle.from(geometry).getPointByDirection(direction);
+  }
+}
 
 export const Line = memo(({ cellId }: { cellId: string }) => {
   const dispatch = useDispatch();
@@ -28,14 +37,16 @@ export const Line = memo(({ cellId }: { cellId: string }) => {
 
   const points = [];
   if (lineCell.source) {
-    const geometry = map[lineCell.source.id]?.geometry;
-    if (geometry) {
-      const { x, y } = Rectangle.from(geometry).getPointByDirection(lineCell.source.direction);
-      points.push({ x, y });
-    }
+    const point = getConnectorPoint(map, lineCell.source.id, lineCell?.source.direction);
+    points.push(point);
   }
 
   points.push(...(lineCell.points || []));
+
+  if (lineCell.target) {
+    const point = getConnectorPoint(map, lineCell.target.id, lineCell?.target.direction);
+    points.push(point);
+  }
 
   if (points === undefined || (points && points.length < 2)) {
     return <></>;

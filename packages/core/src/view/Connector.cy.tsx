@@ -37,6 +37,16 @@ describe('测试连接器', () => {
     chai.expect(document.querySelector('[data-connector]')).to.null;
   });
 
+  it('删除元素时,隐藏连接器', () => {
+    store.dispatch(CellActions.addSticky({ id: 'cell1', geometry: { x: 50, y: 50, width: 100, height: 100 } }));
+    store.dispatch(CellActions.selectDisplayCells(['cell1']));
+    cy.mount(<BedTest store={store} />);
+
+    store.dispatch(CellActions.deleteCells({ cellIds: ['cell1'] }));
+
+    chai.expect(document.querySelector('[data-connector]')).to.null;
+  });
+
   it('连接点在选中元素的四周', () => {
     store.dispatch(CellActions.addSticky({ id: 'cell1', geometry: { x: 50, y: 50, width: 100, height: 100 } }));
     cy.mount(<BedTest store={store} />);

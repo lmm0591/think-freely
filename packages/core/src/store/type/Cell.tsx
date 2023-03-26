@@ -1,3 +1,4 @@
+import { type } from 'cypress/types/jquery';
 import { Point } from '../../model/Point';
 import { Rectangle } from '../../model/Rectangle';
 import { DirectionFour } from '../../view/type/SelectionBox';
@@ -13,19 +14,19 @@ export type CellStyle = {
   autoHeight?: boolean;
   fontSize?: number;
 };
+
+export type ConnectCellType = {
+  id: string;
+  direction: DirectionFour;
+};
+
 export type CellData = {
   id: string;
   text?: string;
   geometry?: RectangleData;
   points?: PointData[];
-  source?: {
-    id: string;
-    direction: DirectionFour;
-  };
-  target?: {
-    id: string;
-    direction: DirectionFour;
-  };
+  source?: ConnectCellType;
+  target?: ConnectCellType;
   style: CellStyle;
   children: string[];
   groupId?: string;

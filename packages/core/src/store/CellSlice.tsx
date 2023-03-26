@@ -6,7 +6,7 @@ import { Point } from '../model/Point';
 import { Rectangle } from '../model/Rectangle';
 import { DirectionFour } from '../view/type/SelectionBox';
 import { getSelectedCellGeometry } from './CellSelector';
-import { CellData, CellStyle, GeometryCellData, PointCellData, PointData, RectangleData } from './type/Cell';
+import { CellData, CellStyle, CellType, ConnectCellType, GeometryCellData, PointCellData, PointData, RectangleData } from './type/Cell';
 import { CalculateHeightDom, CalculateWidthDom } from '../lib/CalculateRectDom';
 
 export interface CellState {
@@ -14,6 +14,9 @@ export interface CellState {
   map: Record<string, CellData>;
   translate: PointData;
   scale: number;
+  drawing: {
+    shape?: { type: CellType; points: PointData[]; source: ConnectCellType; target: ConnectCellType };
+  };
   operate: {
     rubberBand: boolean;
     editId: string | undefined;
@@ -26,6 +29,7 @@ export const initialState: CellState = {
   selectedCellIds: [],
   translate: { x: 0, y: 0 },
   scale: 1,
+  drawing: {},
   operate: {
     scalePoint: undefined,
     editId: undefined,

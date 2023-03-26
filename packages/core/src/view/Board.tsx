@@ -18,6 +18,7 @@ import { Zoom } from './Zoom';
 import { Text } from './Text';
 import { DeleteCell } from './DeleteCell';
 import { Connector } from './Connector';
+import { DrawingLine } from './DrawingShape/DrawingLine';
 
 export const Board = () => {
   const cells = useSelector((state: RootState) => Object.values(state.cell.map));
@@ -87,6 +88,7 @@ export const Board = () => {
               return <Text key={cell.id} cellId={cell.id}></Text>;
             }
           })}
+          <DrawingLine></DrawingLine>
         </g>
         <g className="mx-overlay">
           <SelectionBox></SelectionBox>

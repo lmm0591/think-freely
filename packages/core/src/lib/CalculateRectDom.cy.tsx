@@ -1,4 +1,5 @@
 import { CalculateHeightDom, CalculateWidthDom } from './CalculateRectDom';
+import '../Font.css';
 
 describe('测试 CalculateHeightDom', () => {
   it('单行文本时获取高度', () => {

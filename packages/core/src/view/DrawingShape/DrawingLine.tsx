@@ -11,7 +11,7 @@ export const DrawingLine = () => {
   return (
     <g data-drawing-line>
       <polyline
-        points={drawingLine.points.map((point) => `${point.x},${point.y}`).join(' ')}
+        points={drawingLine.points?.map((point) => `${point.x},${point.y}`).join(' ')}
         style={{
           stroke: 'blue',
           strokeWidth: 1,

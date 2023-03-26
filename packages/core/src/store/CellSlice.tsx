@@ -15,7 +15,7 @@ export interface CellState {
   translate: PointData;
   scale: number;
   drawing: {
-    shape?: { type: CellType; points: PointData[]; source: ConnectCellType; target: ConnectCellType };
+    shape?: { type: CellType; points?: PointData[]; source?: ConnectCellType; target?: ConnectCellType };
   };
   operate: {
     rubberBand: boolean;
@@ -329,6 +329,9 @@ export const CellSlice = createSlice({
         delete state.map[cellId];
       });
       state.selectedCellIds = difference(state.selectedCellIds, cellIds);
+    },
+    startDrawLine(state, { payload: { points } }: PayloadAction<{ points: PointData[] }>) {
+      state.drawing.shape = { points, type: 'LINE' };
     },
   },
 });

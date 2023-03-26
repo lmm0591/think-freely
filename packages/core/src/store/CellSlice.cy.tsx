@@ -19,6 +19,7 @@ const {
   addLine,
   resizeLine,
   deleteCells,
+  startDrawLine,
 } = CellActions;
 
 describe('测试 CellSlice', () => {
@@ -164,6 +165,27 @@ describe('测试 CellSlice', () => {
       { x: 50, y: 50 },
       { x: 150, y: 150 },
     ]);
+  });
+
+  describe('测试绘制线条时的状态', () => {
+    it('当调用 startDrawLine 时，将进入绘制线条状态', () => {
+      let store = reducer(
+        initialState,
+        startDrawLine({
+          points: [
+            { x: 100, y: 100 },
+            { x: 200, y: 200 },
+          ],
+        }),
+      );
+      chai.expect(store.drawing.shape).to.deep.contain({
+        type: 'LINE',
+        points: [
+          { x: 100, y: 100 },
+          { x: 200, y: 200 },
+        ],
+      });
+    });
   });
 
   describe('测试 resizeLine 方法', () => {

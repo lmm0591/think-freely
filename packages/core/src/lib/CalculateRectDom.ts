@@ -5,6 +5,9 @@ calculateRectDom.style.display = 'inline-block';
 calculateRectDom.style.lineHeight = '1.5';
 calculateRectDom.style.wordBreak = 'break-word';
 calculateRectDom.style.zIndex = '9';
+calculateRectDom.style.top = '0px';
+calculateRectDom.style.left = '0px';
+calculateRectDom.style.position = 'absolute';
 
 export const CalculateHeightDom = (width: number, text: string = '', style: CellStyle = {}): number => {
   document.body.appendChild(calculateRectDom);

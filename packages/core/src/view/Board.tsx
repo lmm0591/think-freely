@@ -19,6 +19,7 @@ import { Text } from './Text';
 import { Connector } from './Connector';
 import { DrawingLine } from './DrawingShape/DrawingLine';
 import { useDeleteCell } from './ShortcutKey/DeleteCell';
+import { useSelectAllCell } from './ShortcutKey/SelectAllCell';
 
 export const Board = () => {
   const cells = useSelector((state: RootState) => Object.values(state.cell.map));
@@ -27,6 +28,7 @@ export const Board = () => {
   const dispatch = useDispatch();
   const ref = useRef(null);
   useDeleteCell();
+  useSelectAllCell();
   useEventListener('dblclick', (event) => {
     const target = event.composedPath()[0] as HTMLElement;
     if (target.classList.contains('mx-selection-box') && selectedCellIds.length === 1) {

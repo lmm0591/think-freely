@@ -20,7 +20,7 @@ jobs:
           version: latest
 
       - name: Install
-        run: pnpm install
+        run: pnpm install --frozen-lockfile --prod
 
       - name: Test
         run: pnpm run test

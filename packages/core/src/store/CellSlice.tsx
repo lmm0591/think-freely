@@ -340,6 +340,9 @@ export const CellSlice = createSlice({
       state.selectedCellIds = difference(state.selectedCellIds, cellIds);
     },
     startDrawLine(state, { payload: { source, points } }: PayloadAction<{ source: ConnectCellType; points: PointData[] }>) {
+      if (!state.map[source.id]) {
+        return;
+      }
       state.drawing.shape = { source, points, type: 'LINE' };
     },
     endDraw(state) {

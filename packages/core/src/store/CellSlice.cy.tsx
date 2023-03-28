@@ -168,22 +168,39 @@ describe('测试 CellSlice', () => {
   });
 
   describe('测试绘制线条时的状态', () => {
-    it('当调用 startDrawLine 时，将进入绘制线条状态', () => {
+    it('当调用 startDrawLine 时，source 不存在，将不会绘制预览线条', () => {
       let store = reducer(
         initialState,
         startDrawLine({
+          source: { id: 'cell1', direction: 'E' },
           points: [
             { x: 100, y: 100 },
             { x: 200, y: 200 },
           ],
         }),
       );
+      chai.expect(store.drawing.shape).to.undefined;
+    });
+
+    it('当调用 startDrawLine 时，将进入绘制线条状态', () => {
+      let store = reducer(
+        initialState,
+        addSticky({
+          id: 'cell1',
+          geometry: { x: 100, y: 100, width: 100, height: 100 },
+        }),
+      );
+      store = reducer(
+        store,
+        startDrawLine({
+          source: { id: 'cell1', direction: 'E' },
+          points: [{ x: 200, y: 200 }],
+        }),
+      );
       chai.expect(store.drawing.shape).to.deep.contain({
         type: 'LINE',
-        points: [
-          { x: 100, y: 100 },
-          { x: 200, y: 200 },
-        ],
+        source: { id: 'cell1', direction: 'E' },
+        points: [{ x: 200, y: 200 }],
       });
     });
   });

@@ -16,9 +16,9 @@ import { Line } from './Line';
 import { ArrowDefs } from './ArrowDefs';
 import { Zoom } from './Zoom';
 import { Text } from './Text';
-import { DeleteCell } from './DeleteCell';
 import { Connector } from './Connector';
 import { DrawingLine } from './DrawingShape/DrawingLine';
+import { useDeleteCell } from './ShortcutKey/DeleteCell';
 
 export const Board = () => {
   const cells = useSelector((state: RootState) => Object.values(state.cell.map));
@@ -26,7 +26,7 @@ export const Board = () => {
   const [rubberBandRect, setRubberBandRect] = useState<Rectangle>();
   const dispatch = useDispatch();
   const ref = useRef(null);
-
+  useDeleteCell();
   useEventListener('dblclick', (event) => {
     const target = event.composedPath()[0] as HTMLElement;
     if (target.classList.contains('mx-selection-box') && selectedCellIds.length === 1) {
@@ -98,7 +98,6 @@ export const Board = () => {
       </svg>
       <RubberBand rect={rubberBandRect}></RubberBand>
       <TextEditor></TextEditor>
-      <DeleteCell></DeleteCell>
       <Zoom></Zoom>
     </>
   );

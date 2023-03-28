@@ -1,11 +1,29 @@
-import { useSelector } from 'react-redux';
+import { useRef } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { useDND } from '../hook/useDND';
 import { RootState } from '../store';
 import { useGetSelectedCellGeometry } from '../store/CellSelector';
-import { CellType } from '../store/type/Cell';
+import { CellActions } from '../store/CellSlice';
+import { CellType, PointData } from '../store/type/Cell';
+import { DirectionFour } from './type/SelectionBox';
 
 const ableConnect = (type: CellType) => {
   const ableConnectTypes: CellType[] = ['STICKY', 'TEXT'];
   return ableConnectTypes.includes(type);
+};
+
+export const ConnectPoint = ({ point }: { point: PointData }) => {
+  const ref = useRef(null);
+  const dispatch = useDispatch();
+  useDND(ref, {
+    dragMovingHandler: ({ mouseMovePoint }) => {
+      dispatch(CellActions.startDrawLine({ points: [point, mouseMovePoint] }));
+    },
+    dragEndHandler: () => {
+      dispatch(CellActions.endDraw());
+    },
+  });
+  return <ellipse ref={ref} cx={point.x} cy={point.y} rx="3" ry="3" fill="#576ee0" opacity="0.5"></ellipse>;
 };
 
 export const Connector = () => {
@@ -21,10 +39,10 @@ export const Connector = () => {
     const leftPoint = cellRectangle.getPointLeft();
     return (
       <g data-connector>
-        <ellipse cx={topPoint.x} cy={topPoint.y} rx="3" ry="3" fill="#576ee0" opacity="0.5"></ellipse>
-        <ellipse cx={rightPoint.x} cy={rightPoint.y} rx="3" ry="3" fill="#576ee0" opacity="0.5"></ellipse>
-        <ellipse cx={bottomPoint.x} cy={bottomPoint.y} rx="3" ry="3" fill="#576ee0" opacity="0.5"></ellipse>
-        <ellipse cx={leftPoint.x} cy={leftPoint.y} rx="3" ry="3" fill="#576ee0" opacity="0.5"></ellipse>
+        <ConnectPoint point={topPoint}></ConnectPoint>
+        <ConnectPoint point={rightPoint}></ConnectPoint>
+        <ConnectPoint point={bottomPoint}></ConnectPoint>
+        <ConnectPoint point={leftPoint}></ConnectPoint>
       </g>
     );
   }

@@ -65,4 +65,26 @@ describe('测试连接器', () => {
     cy.get('[data-connector] ellipse:eq(3)').should('have.attr', 'cx', '36');
     cy.get('[data-connector] ellipse:eq(3)').should('have.attr', 'cy', '100');
   });
+
+  describe('测试拖拽连接点场景', () => {
+    beforeEach(() => {
+      store.dispatch(CellActions.addSticky({ id: 'cell1', geometry: { x: 50, y: 50, width: 100, height: 100 } }));
+      store.dispatch(CellActions.selectDisplayCells(['cell1']));
+      cy.mount(<BedTest store={store} />);
+    });
+
+    it('拖拽出一条连接线', () => {
+      cy.get('[data-connector] ellipse:eq(0)').mousedown(3, 3);
+      cy.get('body').mousemove(300, 100);
+
+      cy.get('[data-drawing-line] polyline').should('have.attr', 'points', '100,36 300,100');
+    });
+
+    it('拖拽完成后隐藏绘制预览元素', () => {
+      cy.get('[data-connector] ellipse:eq(0)').mousedown(3, 3);
+      cy.get('body').mousemove(300, 100).mouseup(300, 100);
+
+      cy.get('[data-drawing-line] polyline').should('not.exist');
+    });
+  });
 });

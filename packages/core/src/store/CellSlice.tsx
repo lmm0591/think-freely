@@ -333,6 +333,9 @@ export const CellSlice = createSlice({
     startDrawLine(state, { payload: { points } }: PayloadAction<{ points: PointData[] }>) {
       state.drawing.shape = { points, type: 'LINE' };
     },
+    endDraw(state) {
+      state.drawing.shape = undefined;
+    },
   },
 });
 

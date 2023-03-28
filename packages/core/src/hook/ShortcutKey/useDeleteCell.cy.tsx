@@ -1,7 +1,7 @@
 import { Store, configureStore } from '@reduxjs/toolkit';
 import { ToolkitStore } from '@reduxjs/toolkit/dist/configureStore';
 import { Provider } from 'react-redux';
-import { Board } from '../Board';
+import { Board } from '../../view/Board';
 import { CellActions, CellReduce } from '../../store/CellSlice';
 import { RootState } from '../../store';
 

@@ -1,9 +1,9 @@
 import { Provider } from 'react-redux';
 import { ToolkitStore } from '@reduxjs/toolkit/dist/configureStore';
 import { configureStore, Store } from '@reduxjs/toolkit';
-import { Board } from './Board';
-import { CellReduce } from '../store/CellSlice';
-import { RootState } from '../store';
+import { Board } from '../../view/Board';
+import { CellReduce } from '../../store/CellSlice';
+import { RootState } from '../../store';
 
 const BedTest = ({ store }: { store: Store<unknown> }) => {
   return (

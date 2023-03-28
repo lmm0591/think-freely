@@ -1,10 +1,9 @@
 import { useEventListener } from 'ahooks';
-import { memo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from '../store';
-import { CellActions } from '../store/CellSlice';
+import { RootState } from '../../store';
+import { CellActions } from '../../store/CellSlice';
 
-export const Zoom = memo(() => {
+export const useZoom = () => {
   const dispatch = useDispatch();
   const { translate, scale } = useSelector((state: RootState) => state.cell);
 
@@ -25,5 +24,4 @@ export const Zoom = memo(() => {
     },
     { passive: false },
   );
-  return <></>;
-});
+};

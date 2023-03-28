@@ -55,7 +55,7 @@ export const Line = memo(({ cellId }: { cellId: string }) => {
   const startArrow = lineCell.style.startArrow && `url(#think-freely-${lineCell.style.startArrow})`;
 
   return (
-    <g className="mx-shape" data-cell-id={lineCell.id}>
+    <g className="mx-shape" data-shape-line data-cell-id={lineCell.id}>
       <polyline
         points={points.map((point) => `${point.x},${point.y}`).join(' ')}
         markerEnd={endArrow}

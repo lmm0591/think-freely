@@ -1,5 +1,6 @@
 import { useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { v4 } from 'uuid';
 import { useDND } from '../hook/useDND';
 import { RootState } from '../store';
 import { useGetSelectedCellGeometry } from '../store/CellSelector';
@@ -12,15 +13,16 @@ const ableConnect = (type: CellType) => {
   return ableConnectTypes.includes(type);
 };
 
-export const ConnectPoint = ({ point }: { point: PointData }) => {
+export const ConnectPoint = ({ point, direction, id }: { point: PointData; direction: DirectionFour; id: string }) => {
   const ref = useRef(null);
   const dispatch = useDispatch();
   useDND(ref, {
     dragMovingHandler: ({ mouseMovePoint }) => {
       dispatch(CellActions.startDrawLine({ points: [point, mouseMovePoint] }));
     },
-    dragEndHandler: () => {
+    dragEndHandler: ({ mouseMovePoint }) => {
       dispatch(CellActions.endDraw());
+      dispatch(CellActions.addLine({ id: v4(), source: { direction, id }, points: [mouseMovePoint] }));
     },
   });
   return <ellipse ref={ref} cx={point.x} cy={point.y} rx="3" ry="3" fill="#576ee0" opacity="0.5"></ellipse>;
@@ -32,6 +34,7 @@ export const Connector = () => {
 
   const onlyOneCell = selectedCellIds.length === 1 && ableConnect(map[selectedCellIds[0]].type);
   if (onlyOneCell && cellRectangle) {
+    const selectedId = selectedCellIds[0];
     cellRectangle = cellRectangle.grow(14);
     const topPoint = cellRectangle.getPointTop();
     const rightPoint = cellRectangle.getPointRight();
@@ -39,10 +42,10 @@ export const Connector = () => {
     const leftPoint = cellRectangle.getPointLeft();
     return (
       <g data-connector>
-        <ConnectPoint point={topPoint}></ConnectPoint>
-        <ConnectPoint point={rightPoint}></ConnectPoint>
-        <ConnectPoint point={bottomPoint}></ConnectPoint>
-        <ConnectPoint point={leftPoint}></ConnectPoint>
+        <ConnectPoint point={topPoint} direction="N" id={selectedId}></ConnectPoint>
+        <ConnectPoint point={rightPoint} direction="E" id={selectedId}></ConnectPoint>
+        <ConnectPoint point={bottomPoint} direction="S" id={selectedId}></ConnectPoint>
+        <ConnectPoint point={leftPoint} direction="W" id={selectedId}></ConnectPoint>
       </g>
     );
   }

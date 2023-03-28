@@ -77,7 +77,7 @@ describe('测试连接器', () => {
       cy.get('[data-connector] ellipse:eq(0)').mousedown(3, 3);
       cy.get('body').mousemove(300, 100);
 
-      cy.get('[data-drawing-line] polyline').should('have.attr', 'points', '100,36 300,100');
+      cy.get('[data-drawing-line] polyline').should('have.attr', 'points', '100,50 300,100');
     });
 
     it('当拖拽完成后, 将隐藏绘制预览元素', () => {
@@ -92,6 +92,20 @@ describe('测试连接器', () => {
       cy.get('body').mousemove(300, 100).mouseup(300, 100);
 
       cy.get('[data-shape-line] polyline').should('have.attr', 'points', '100,50 300,100');
+    });
+
+    describe('测试白板偏移场景', () => {
+      beforeEach(() => {
+        store.dispatch(CellActions.translate({ x: 100, y: 100 }));
+      });
+
+      it('当点击连接点拖拽时，将会绘制出一条预览连接线', () => {
+        cy.get('[data-connector] ellipse:eq(0)').mousedown(3, 3);
+        cy.get('body').mousemove(300, 100);
+
+        cy.get('[data-drawing-line] polyline').should('have.attr', 'points', '100,50 300,100');
+        cy.get('body').mouseup(300, 100);
+      });
     });
   });
 });

@@ -24,15 +24,14 @@ describe('测试线条创建时场景', () => {
   });
 
   it('通过模型显示绘制中的线条', () => {
+    store.dispatch(CellActions.addSticky({ id: 'cell1', geometry: { x: 50, y: 50, width: 100, height: 100 } }));
     store.dispatch(
       CellActions.startDrawLine({
-        points: [
-          { x: 0, y: 0 },
-          { x: 100, y: 100 },
-        ],
+        source: { id: 'cell1', direction: 'N' },
+        points: [{ x: 200, y: 200 }],
       }),
     );
     cy.mount(<BedTest store={store} />);
-    cy.get('[data-drawing-line] polyline').should('exist').should('have.attr', 'points', '0,0 100,100');
+    cy.get('[data-drawing-line] polyline').should('exist').should('have.attr', 'points', '100,50 200,200');
   });
 });

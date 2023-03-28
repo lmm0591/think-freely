@@ -49,4 +49,6 @@ export type PointCellData = {
   type: CellType;
 };
 
+export type DrawingCellData = { type: CellType; points?: PointData[]; source?: ConnectCellType; target?: ConnectCellType };
+
 export type PointData = Pick<Point, 'x' | 'y'>;

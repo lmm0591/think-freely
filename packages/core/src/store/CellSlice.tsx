@@ -6,7 +6,16 @@ import { Point } from '../model/Point';
 import { Rectangle } from '../model/Rectangle';
 import { DirectionFour } from '../view/type/SelectionBox';
 import { getSelectedCellGeometry } from './CellSelector';
-import { CellData, CellStyle, CellType, ConnectCellType, GeometryCellData, PointCellData, PointData, RectangleData } from './type/Cell';
+import {
+  CellData,
+  CellStyle,
+  ConnectCellType,
+  DrawingCellData,
+  GeometryCellData,
+  PointCellData,
+  PointData,
+  RectangleData,
+} from './type/Cell';
 import { CalculateHeightDom, CalculateWidthDom } from '../lib/CalculateRectDom';
 
 export interface CellState {
@@ -15,7 +24,7 @@ export interface CellState {
   translate: PointData;
   scale: number;
   drawing: {
-    shape?: { type: CellType; points?: PointData[]; source?: ConnectCellType; target?: ConnectCellType };
+    shape?: DrawingCellData; // TODO: shape 改成 cell
   };
   operate: {
     rubberBand: boolean;
@@ -330,8 +339,8 @@ export const CellSlice = createSlice({
       });
       state.selectedCellIds = difference(state.selectedCellIds, cellIds);
     },
-    startDrawLine(state, { payload: { points } }: PayloadAction<{ points: PointData[] }>) {
-      state.drawing.shape = { points, type: 'LINE' };
+    startDrawLine(state, { payload: { source, points } }: PayloadAction<{ source: ConnectCellType; points: PointData[] }>) {
+      state.drawing.shape = { source, points, type: 'LINE' };
     },
     endDraw(state) {
       state.drawing.shape = undefined;

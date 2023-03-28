@@ -6,6 +6,7 @@ import { CellActions } from '../store/CellSlice';
 import { Rectangle } from '../model/Rectangle';
 import { DirectionFour } from './type/SelectionBox';
 import { CellData } from '../store/type/Cell';
+import { useLinePoints } from '../hook/useLinePoints';
 
 function getConnectorPoint(cellStore: Record<string, CellData>, cellId: string, direction: DirectionFour) {
   const geometry = cellStore[cellId]?.geometry;
@@ -17,7 +18,7 @@ function getConnectorPoint(cellStore: Record<string, CellData>, cellId: string, 
 export const Line = memo(({ cellId }: { cellId: string }) => {
   const dispatch = useDispatch();
   const lineCell = useSelector((state: RootState) => state.cell.map[cellId]);
-  const { translate, scale, map } = useSelector((state: RootState) => state.cell);
+  const { translate, scale } = useSelector((state: RootState) => state.cell);
 
   const ref = useRef(null);
   useDND(ref, {
@@ -34,21 +35,9 @@ export const Line = memo(({ cellId }: { cellId: string }) => {
       );
     },
   });
+  const points = useLinePoints(lineCell);
 
-  const points = [];
-  if (lineCell.source) {
-    const point = getConnectorPoint(map, lineCell.source.id, lineCell?.source.direction);
-    point && points.push(point);
-  }
-
-  points.push(...(lineCell.points || []));
-
-  if (lineCell.target) {
-    const point = getConnectorPoint(map, lineCell.target.id, lineCell?.target.direction);
-    point && points.push(point);
-  }
-
-  if (points === undefined || (points && points.length < 2)) {
+  if (points.length < 2) {
     return <></>;
   }
   const endArrow = lineCell.style.endArrow && `url(#think-freely-${lineCell.style.endArrow})`;

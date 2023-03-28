@@ -18,7 +18,7 @@ export const ConnectPoint = ({ point, direction, id }: { point: PointData; direc
   const dispatch = useDispatch();
   useDND(ref, {
     dragMovingHandler: ({ mouseMovePoint }) => {
-      dispatch(CellActions.startDrawLine({ points: [point, mouseMovePoint] }));
+      dispatch(CellActions.startDrawLine({ source: { direction, id }, points: [mouseMovePoint] }));
     },
     dragEndHandler: ({ mouseMovePoint }) => {
       dispatch(CellActions.endDraw());
@@ -35,7 +35,8 @@ export const Connector = () => {
   const onlyOneCell = selectedCellIds.length === 1 && ableConnect(map[selectedCellIds[0]].type);
   if (onlyOneCell && cellRectangle) {
     const selectedId = selectedCellIds[0];
-    cellRectangle = cellRectangle.grow(14);
+
+    cellRectangle = cellRectangle.translateByPoint(translate).grow(14);
     const topPoint = cellRectangle.getPointTop();
     const rightPoint = cellRectangle.getPointRight();
     const bottomPoint = cellRectangle.getPointBottom();

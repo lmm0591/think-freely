@@ -13,7 +13,7 @@ function getConnectorPoint(cellStore: Record<string, CellData>, cellId: string, 
 }
 
 export const useLinePoints = (line?: DrawingCellData, inCanvasLayer = true) => {
-  const { map, translate } = useSelector((state: RootState) => state.cell);
+  const { map, translate, scale } = useSelector((state: RootState) => state.cell);
 
   if (line?.type === undefined) {
     return [];
@@ -28,7 +28,11 @@ export const useLinePoints = (line?: DrawingCellData, inCanvasLayer = true) => {
   if (inCanvasLayer) {
     points.push(...(line.points || []));
   } else {
-    const linePt = line.points?.map((point) => Point.from(point).translateByPoint(translate));
+    const linePt = line.points?.map((point) =>
+      Point.from(point)
+        .translateByPoint(translate)
+        .scale(1 / scale),
+    );
     points.push(...(linePt || []));
   }
 

@@ -8,13 +8,6 @@ import { DirectionFour } from './type/SelectionBox';
 import { CellData } from '../store/type/Cell';
 import { useLinePoints } from '../hook/useLinePoints';
 
-function getConnectorPoint(cellStore: Record<string, CellData>, cellId: string, direction: DirectionFour) {
-  const geometry = cellStore[cellId]?.geometry;
-  if (geometry) {
-    return Rectangle.from(geometry).getPointByDirection(direction);
-  }
-}
-
 export const Line = memo(({ cellId }: { cellId: string }) => {
   const dispatch = useDispatch();
   const lineCell = useSelector((state: RootState) => state.cell.map[cellId]);

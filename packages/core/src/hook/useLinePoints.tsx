@@ -1,4 +1,5 @@
 import { useSelector } from 'react-redux';
+import { Point } from '../model/Point';
 import { Rectangle } from '../model/Rectangle';
 import { RootState } from '../store';
 import { CellData, DrawingCellData } from '../store/type/Cell';
@@ -11,8 +12,9 @@ function getConnectorPoint(cellStore: Record<string, CellData>, cellId: string, 
   }
 }
 
-export const useLinePoints = (line?: DrawingCellData) => {
-  const { map } = useSelector((state: RootState) => state.cell);
+export const useLinePoints = (line?: DrawingCellData, inCanvasLayer = true) => {
+  const { map, translate } = useSelector((state: RootState) => state.cell);
+
   if (line?.type === undefined) {
     return [];
   }
@@ -23,11 +25,17 @@ export const useLinePoints = (line?: DrawingCellData) => {
     point && points.push(point);
   }
 
-  points.push(...(line.points || []));
+  if (inCanvasLayer) {
+    points.push(...(line.points || []));
+  } else {
+    const linePt = line.points?.map((point) => Point.from(point).translateByPoint(translate));
+    points.push(...(linePt || []));
+  }
 
   if (line.target) {
     const point = getConnectorPoint(map, line.target.id, line?.target.direction);
     point && points.push(point);
   }
+
   return points;
 };

@@ -4,7 +4,7 @@ import { RootState } from '../../store';
 
 export const DrawingLine = () => {
   const drawingLine = useSelector((state: RootState) => state.cell.drawing.shape);
-  const points = useLinePoints(drawingLine);
+  const points = useLinePoints(drawingLine, false);
 
   if (drawingLine?.type === undefined) {
     return <></>;

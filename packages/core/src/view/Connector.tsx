@@ -16,13 +16,14 @@ const ableConnect = (type: CellType) => {
 export const ConnectPoint = ({ point, direction, id }: { point: PointData; direction: DirectionFour; id: string }) => {
   const ref = useRef(null);
   const dispatch = useDispatch();
+  const { translate } = useSelector((state: RootState) => state.cell);
   useDND(ref, {
     dragMovingHandler: ({ mouseMovePoint }) => {
       dispatch(CellActions.startDrawLine({ source: { direction, id }, points: [mouseMovePoint] }));
     },
     dragEndHandler: ({ mouseMovePoint }) => {
       dispatch(CellActions.endDraw());
-      dispatch(CellActions.addLine({ id: v4(), source: { direction, id }, points: [mouseMovePoint] }));
+      dispatch(CellActions.addLine({ id: v4(), source: { direction, id }, points: [mouseMovePoint.translateByPoint(translate)] }));
     },
   });
   return <ellipse ref={ref} cx={point.x} cy={point.y} rx="3" ry="3" fill="#576ee0" opacity="0.5"></ellipse>;
@@ -36,7 +37,7 @@ export const Connector = () => {
   if (onlyOneCell && cellRectangle) {
     const selectedId = selectedCellIds[0];
 
-    cellRectangle = cellRectangle.translateByPoint(translate).grow(14);
+    cellRectangle = cellRectangle.grow(14);
     const topPoint = cellRectangle.getPointTop();
     const rightPoint = cellRectangle.getPointRight();
     const bottomPoint = cellRectangle.getPointBottom();

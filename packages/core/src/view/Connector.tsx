@@ -19,12 +19,21 @@ export const ConnectPoint = ({ point, direction, id }: { point: PointData; direc
   const { translate, scale } = useSelector((state: RootState) => state.cell);
   useDND(ref, {
     dragMovingHandler: ({ mouseMovePoint }) => {
-      dispatch(CellActions.startDrawLine({ source: { direction, id }, points: [mouseMovePoint] }));
+      dispatch(CellActions.startDrawLine({ source: { direction, id }, points: [mouseMovePoint.toData()] }));
     },
     dragEndHandler: ({ mouseMovePoint }) => {
       dispatch(CellActions.endDraw());
       dispatch(
-        CellActions.addLine({ id: v4(), source: { direction, id }, points: [mouseMovePoint.translateByPoint(translate).scale(1 / scale)] }),
+        CellActions.addLine({
+          id: v4(),
+          source: { direction, id },
+          points: [
+            mouseMovePoint
+              .translateByPoint(translate)
+              .scale(1 / scale)
+              .toData(),
+          ],
+        }),
       );
     },
   });

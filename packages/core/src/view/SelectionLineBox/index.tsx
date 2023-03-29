@@ -14,6 +14,7 @@ export const SelectionLine = () => {
   if (points) {
     return (
       <g className="mx-line-selection-box">
+        {selectedLine.source && <SelectionLineResizer source={selectedLine.source} lineId={selectedLine.id}></SelectionLineResizer>}
         {points.map((_, index) => (
           <SelectionLineResizer key={index} points={points} pointIndex={index} lineId={selectedLine.id}></SelectionLineResizer>
         ))}

@@ -222,4 +222,18 @@ describe('测试线条选择框', () => {
       cy.get('[data-point-index="2"]').should('have.attr', 'cx', 400).should('have.attr', 'cy', 400);
     });
   });
+
+  describe('测试连接元素场景', () => {
+    beforeEach(() => {
+      store.dispatch(CellActions.addSticky({ id: 'cell1', geometry: { x: 100, y: 100, width: 100, height: 100 } }));
+      store.dispatch(CellActions.addLine({ id: 'line1', points: [{ x: 300, y: 300 }], source: { id: 'cell1', direction: 'E' } }));
+      store.dispatch(CellActions.selectDisplayCells(['line1']));
+      cy.mount(<BedTest store={store} />);
+    });
+
+    it('显示选择框', () => {
+      cy.get('[data-point-source]').should('have.attr', 'cx', 200).should('have.attr', 'cy', 150);
+      cy.get('[data-point-index="0"]').should('have.attr', 'cx', 300).should('have.attr', 'cy', 300);
+    });
+  });
 });

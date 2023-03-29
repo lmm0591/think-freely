@@ -31,7 +31,8 @@ export const useLinePoints = (line?: DrawingCellData, inCanvasLayer = true) => {
     const linePt = line.points?.map((point) =>
       Point.from(point)
         .translateByPoint(translate)
-        .scale(1 / scale),
+        .scale(1 / scale)
+        .toData(),
     );
     points.push(...(linePt || []));
   }

@@ -2,14 +2,25 @@ import { useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useDND } from '../../hook/useDND';
 import { Point } from '../../model/Point';
+import { Rectangle } from '../../model/Rectangle';
 import { RootState } from '../../store';
 import { CellActions } from '../../store/CellSlice';
-import { PointData } from '../../store/type/Cell';
+import { ConnectCellType, PointData, RectangleData } from '../../store/type/Cell';
 
-export const SelectionLineResizer = ({ points, pointIndex, lineId }: { pointIndex: number; points: PointData[]; lineId: string }) => {
+export const SelectionLineResizer = ({
+  lineId,
+  points,
+  pointIndex,
+  source,
+}: {
+  lineId: string;
+  pointIndex?: number;
+  points?: PointData[];
+  source?: ConnectCellType;
+}) => {
   const dispatch = useDispatch();
   const ref = useRef(null);
-  const { translate, scale } = useSelector((state: RootState) => state.cell);
+  const { translate, scale, map } = useSelector((state: RootState) => state.cell);
 
   useDND(ref, {
     dragMovingHandler: ({ mouseMovePoint }) => {
@@ -22,12 +33,24 @@ export const SelectionLineResizer = ({ points, pointIndex, lineId }: { pointInde
       }
     },
   });
-  const point = Point.from(points[pointIndex]).scale(scale).offsetByPoint(translate);
+
+  let point;
+  if (points && pointIndex !== undefined) {
+    point = Point.from(points[pointIndex]).scale(scale).offsetByPoint(translate);
+  } else if (source && map[source.id].geometry) {
+    point = Rectangle.from(map[source.id].geometry as RectangleData).getPointByDirection(source.direction);
+  }
+
+  if (!point) {
+    return <></>;
+  }
+
   return (
     <ellipse
       ref={ref}
       data-resizer-line
       data-point-index={pointIndex}
+      data-point-source
       cx={point.x}
       cy={point.y}
       rx="5"

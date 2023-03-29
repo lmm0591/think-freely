@@ -123,7 +123,7 @@ describe('测试连接器', () => {
         cy.get('[data-connector] ellipse:eq(3)').should('have.attr', 'cy', '200');
       });
 
-      it.only('当拖拽完成后, 将创建一条连接线', () => {
+      it('当拖拽完成后, 将创建一条连接线', () => {
         cy.get('[data-connector] ellipse:eq(0)').mousedown(3, 3);
         cy.get('body').mousemove(300, 100).mouseup(300, 100);
 

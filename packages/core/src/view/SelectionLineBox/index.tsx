@@ -18,6 +18,8 @@ export const SelectionLine = () => {
         {points.map((_, index) => (
           <SelectionLineResizer key={index} points={points} pointIndex={index} lineId={selectedLine.id}></SelectionLineResizer>
         ))}
+
+        {selectedLine.source && <AddPointer points={points} source={selectedLine.source} lineId={selectedLine.id}></AddPointer>}
         {points.map((_, index) => {
           const isLastPoint = index === points.length - 1;
           if (!isLastPoint) {

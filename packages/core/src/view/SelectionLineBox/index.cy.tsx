@@ -235,5 +235,9 @@ describe('测试线条选择框', () => {
       cy.get('[data-point-source]').should('have.attr', 'cx', 200).should('have.attr', 'cy', 150);
       cy.get('[data-point-index="0"]').should('have.attr', 'cx', 300).should('have.attr', 'cy', 300);
     });
+
+    it('显示增加节点按钮', () => {
+      cy.get('[data-add-pointer]').first().should('have.attr', 'cx', 250).should('have.attr', 'cy', 225);
+    });
   });
 });

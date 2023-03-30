@@ -244,12 +244,13 @@ export const CellSlice = createSlice({
       resizeRectCells(state, displayCells, oldDisplayRect, direction, vector);
       resizeLinePints(state, lineCells, oldDisplayRect, direction, vector);
     },
-    resizeLine: (state, { payload }: PayloadAction<{ id: string; points: PointData[] }>) => {
+    resizeLine: (state, { payload }: PayloadAction<{ id: string; points: PointData[]; source?: ConnectCellType }>) => {
       const line = state.map[payload.id];
       if (line === undefined || !validatePoints({ ...payload, source: line.source, target: line.target })) {
         return;
       }
       line.points = payload.points;
+      line.source = payload.source;
     },
     moveCell: (state, { payload }: PayloadAction<{ id: string; point: PointData }>) => {
       const cell = state.map[payload.id];

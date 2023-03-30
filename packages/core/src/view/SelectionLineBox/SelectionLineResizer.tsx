@@ -5,31 +5,28 @@ import { Point } from '../../model/Point';
 import { Rectangle } from '../../model/Rectangle';
 import { RootState } from '../../store';
 import { CellActions } from '../../store/CellSlice';
-import { ConnectCellType, PointData, RectangleData } from '../../store/type/Cell';
+import { CellData, RectangleData } from '../../store/type/Cell';
 
-export const SelectionLineResizer = ({
-  lineId,
-  points,
-  pointIndex,
-  source,
-}: {
-  lineId: string;
-  pointIndex?: number;
-  points?: PointData[];
-  source?: ConnectCellType;
-}) => {
+export const SelectionLineResizer = ({ pointIndex, line }: { pointIndex?: number; line: CellData }) => {
   const dispatch = useDispatch();
   const ref = useRef(null);
+  const { points, source, id: lineId } = line;
   const { translate, scale, map } = useSelector((state: RootState) => state.cell);
 
   useDND(ref, {
-    dragMovingHandler: ({ mouseMovePoint }) => {
+    dragMovingHandler: ({ mouseMovePoint, isFirstMoving }) => {
+      const firstPoint = mouseMovePoint
+        .translateByPoint(translate)
+        .scale(1 / scale)
+        .toData();
+      if (points && pointIndex === undefined) {
+        const newPoints = isFirstMoving ? points : [...points].slice(1);
+        dispatch(CellActions.resizeLine({ id: lineId, points: [firstPoint, ...newPoints] }));
+        return;
+      }
       if (points && ref.current) {
-        const pointIndex = Number((ref.current as SVGEllipseElement).getAttribute('data-point-index')) || 0;
-        const newPoints = points.map((point, index) =>
-          pointIndex === index ? { ...mouseMovePoint.translateByPoint(translate).scale(1 / scale) } : { ...point },
-        );
-        dispatch(CellActions.resizeLine({ id: lineId, points: newPoints }));
+        const newPoints = points.map((point, index) => (pointIndex === index ? firstPoint : { ...point }));
+        dispatch(CellActions.resizeLine({ id: lineId, points: newPoints, source: line.source }));
       }
     },
   });
@@ -41,18 +38,15 @@ export const SelectionLineResizer = ({
     point = Rectangle.from(map[source.id].geometry as RectangleData).getPointByDirection(source.direction);
   }
 
-  if (!point) {
-    return <></>;
-  }
-
   return (
     <ellipse
       ref={ref}
       data-resizer-line
       data-point-index={pointIndex}
-      data-point-source
-      cx={point.x}
-      cy={point.y}
+      data-point-source={source}
+      style={{ display: point ? 'block' : 'none' }}
+      cx={point?.x}
+      cy={point?.y}
       rx="5"
       ry="5"
       fill="#fff"

@@ -121,7 +121,7 @@ describe('测试线条', () => {
 
       it('移动线条始点', () => {
         cy.get('[data-cell-id="line1"]').click();
-        cy.get('[data-resizer-line]').mousedown(2, 2);
+        cy.get('[data-resizer-line][data-point-index=0]').mousedown(2, 2);
         cy.get('body').mousemove(150, 50).mouseup(150, 50);
         cy.get('[data-cell-id="line1"] polyline').should('have.attr', 'points', '150,50 200,250');
       });

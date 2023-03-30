@@ -50,10 +50,11 @@ describe('测试线条选择框', () => {
     });
 
     it('显示多个调整拐点按钮', () => {
-      cy.get('[data-resizer-line]').should('have.length', 3);
-      cy.get('[data-resizer-line]').eq(0).should('have.attr', 'cx', 50).should('have.attr', 'cy', 50);
-      cy.get('[data-resizer-line]').eq(1).should('have.attr', 'cx', 150).should('have.attr', 'cy', 50);
-      cy.get('[data-resizer-line]').eq(2).should('have.attr', 'cx', 50).should('have.attr', 'cy', 150);
+      cy.get('[data-resizer-line]').should('have.length', 4);
+      cy.get('[data-resizer-line]').eq(0).should('not.visible');
+      cy.get('[data-resizer-line]').eq(1).should('have.attr', 'cx', 50).should('have.attr', 'cy', 50);
+      cy.get('[data-resizer-line]').eq(2).should('have.attr', 'cx', 150).should('have.attr', 'cy', 50);
+      cy.get('[data-resizer-line]').eq(3).should('have.attr', 'cx', 50).should('have.attr', 'cy', 150);
     });
 
     it('显示多个创建拐点', () => {
@@ -238,6 +239,20 @@ describe('测试线条选择框', () => {
 
     it('显示增加节点按钮', () => {
       cy.get('[data-add-pointer]').first().should('have.attr', 'cx', 250).should('have.attr', 'cy', 225);
+    });
+
+    it('移动起点，将调整线条的起点坐标', () => {
+      cy.get('body')
+        .mousedown(200, 150)
+        .mousemove(200, 150)
+        .mousemove(300, 150)
+        .mouseup(300, 150)
+        .then(() => {
+          chai.expect((store.getState() as RootState).cell.map['line1'].points).eql([
+            { x: 300, y: 150 },
+            { x: 300, y: 300 },
+          ]);
+        });
     });
   });
 });

@@ -6,55 +6,57 @@ import { Point } from '../../model/Point';
 import { Rectangle } from '../../model/Rectangle';
 import { RootState } from '../../store';
 import { CellActions } from '../../store/CellSlice';
-import { ConnectCellType, PointData, RectangleData } from '../../store/type/Cell';
+import { CellData, PointData, RectangleData } from '../../store/type/Cell';
 
-export const AddPointer = ({
-  lineId,
-  points,
-  pointIndex,
-  source,
-}: {
-  lineId: string;
-  pointIndex?: number;
-  points: PointData[];
-  source?: ConnectCellType;
-}) => {
+export const AddPointer = ({ pointIndex, line }: { pointIndex?: number; line: CellData }) => {
   const dispatch = useDispatch();
   const ref = useRef(null);
   const { translate, scale, map } = useSelector((state: RootState) => state.cell);
+  const { points, source, id: lineId } = line;
 
   useDND(ref, {
     dragMovingHandler: ({ mouseMovePoint, isFirstMoving }) => {
-      if (pointIndex === undefined) {
+      const addPoint = mouseMovePoint
+        .translateByPoint(translate)
+        .scale(1 / scale)
+        .toData();
+      let newPoints: PointData[] = [];
+      if (points === undefined) {
         return;
       }
-      let newPoints: PointData[] = [];
-      mouseMovePoint.translateByPoint(translate).scale(1 / scale);
-      if (isFirstMoving) {
-        newPoints = points.flatMap((point, index) => (pointIndex === index ? [{ ...point }, { ...mouseMovePoint }] : { ...point }));
+
+      if (pointIndex === undefined) {
+        newPoints = isFirstMoving ? points : [...points].slice(1);
+        dispatch(CellActions.resizeLine({ id: lineId, points: [addPoint, ...newPoints], source: line.source }));
+        return;
       } else {
-        newPoints = points.flatMap((point, index) => (pointIndex + 1 === index ? { ...mouseMovePoint } : { ...point }));
+        if (isFirstMoving) {
+          newPoints = points.flatMap((point, index) => (pointIndex === index ? [{ ...point }, addPoint] : { ...point }));
+        } else {
+          newPoints = points.flatMap((point, index) => (pointIndex + 1 === index ? addPoint : { ...point }));
+        }
+        dispatch(CellActions.resizeLine({ id: lineId, points: newPoints, source: line.source }));
       }
-      dispatch(CellActions.resizeLine({ id: lineId, points: newPoints }));
     },
   });
 
-  let midpoint = new Point(0, 0);
-  if (pointIndex !== undefined) {
+  let midpoint: Point | undefined = undefined;
+  if (points && pointIndex !== undefined) {
     midpoint = new Line(Point.from(points[pointIndex]), Point.from(points[pointIndex + 1])).getMidpoint();
-  } else if (source && map[source.id].geometry) {
+  } else if (points && source && map[source.id].geometry) {
     const firstPoint = Rectangle.from(map[source.id].geometry as RectangleData).getPointByDirection(source.direction);
     midpoint = new Line(Point.from(firstPoint), Point.from(points[0])).getMidpoint();
   }
 
-  midpoint = midpoint.scale(scale).offsetByPoint(translate);
+  midpoint = midpoint?.scale(scale)?.offsetByPoint(translate);
 
   return (
     <ellipse
       ref={ref}
       data-add-pointer
-      cx={midpoint.x}
-      cy={midpoint.y}
+      style={{ display: midpoint ? 'block' : 'none' }}
+      cx={midpoint?.x}
+      cy={midpoint?.y}
       rx="5"
       ry="5"
       fill="#84a8eb"

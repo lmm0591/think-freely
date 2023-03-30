@@ -37,6 +37,43 @@ describe('测试线条选择框', () => {
     cy.get('[data-point-index="1"]').should('have.attr', 'cx', 150).should('have.attr', 'cy', 150);
   });
 
+  it('显示增加拐点按钮', () => {
+    addLine(store, 'line1', [
+      { x: 50, y: 50 },
+      { x: 150, y: 150 },
+    ]);
+    store.dispatch(CellActions.selectDisplayCells(['line1']));
+    cy.mount(<BedTest store={store} />);
+
+    cy.get('[data-add-pointer]:eq(0)').should('not.visible');
+    cy.get('[data-add-pointer]:eq(1)').should('have.attr', 'cx', 100).should('have.attr', 'cy', 100);
+  });
+
+  it('移动增加拐点按钮，增加新的拐点', () => {
+    addLine(store, 'line1', [
+      { x: 50, y: 50 },
+      { x: 150, y: 150 },
+    ]);
+    store.dispatch(CellActions.selectDisplayCells(['line1']));
+    cy.mount(<BedTest store={store} />);
+    cy.get('body').mousedown(100, 100).mousemove(150, 50).mouseup(150, 50);
+    cy.get('[data-add-pointer]:eq(1)').should('have.attr', 'cx', 100).should('have.attr', 'cy', 50);
+    cy.get('[data-add-pointer]:eq(2)').should('have.attr', 'cx', 150).should('have.attr', 'cy', 100);
+  });
+
+  it('移动起点, 将调整线条的起点坐标', () => {
+    addLine(store, 'line1', [
+      { x: 50, y: 50 },
+      { x: 150, y: 150 },
+    ]);
+    store.dispatch(CellActions.selectDisplayCells(['line1']));
+    cy.mount(<BedTest store={store} />);
+    cy.get('[data-point-index="0"]').mousedown(2, 2).mousedown(2, 2);
+    cy.get('body').mousemove(0, 0).mouseup(0, 0);
+
+    cy.get('[data-cell-id="line1"] polyline').should('have.attr', 'points', '0,0 150,150');
+  });
+
   describe('测试显示折线场景', () => {
     beforeEach(() => {
       addLine(store, 'cell1', [
@@ -57,49 +94,15 @@ describe('测试线条选择框', () => {
     });
 
     it('显示多个创建拐点', () => {
-      cy.get('[data-add-pointer]').should('have.length', 2);
-      cy.get('[data-add-pointer]').eq(0).should('have.attr', 'cx', 100).should('have.attr', 'cy', 50);
-      cy.get('[data-add-pointer]').eq(1).should('have.attr', 'cx', 100).should('have.attr', 'cy', 100);
+      cy.get('[data-add-pointer]').should('have.length', 3);
+      cy.get('[data-add-pointer]').eq(0).should('not.visible');
+      cy.get('[data-add-pointer]').eq(1).should('have.attr', 'cx', 100).should('have.attr', 'cy', 50);
+      cy.get('[data-add-pointer]').eq(2).should('have.attr', 'cx', 100).should('have.attr', 'cy', 100);
     });
 
     it('显示多条线段', () => {
       cy.get('[data-cell-id="cell1"] polyline').eq(0).should('have.attr', 'points', '50,50 150,50 50,150');
     });
-  });
-
-  it('显示增加拐点按钮', () => {
-    addLine(store, 'cell1', [
-      { x: 50, y: 50 },
-      { x: 150, y: 150 },
-    ]);
-    store.dispatch(CellActions.selectDisplayCells(['cell1']));
-    cy.mount(<BedTest store={store} />);
-
-    cy.get('[data-add-pointer]').should('have.length', 1).should('have.attr', 'cx', 100).should('have.attr', 'cy', 100);
-  });
-
-  it('移动增加拐点按钮，增加新的拐点', () => {
-    addLine(store, 'cell1', [
-      { x: 50, y: 50 },
-      { x: 150, y: 150 },
-    ]);
-    store.dispatch(CellActions.selectDisplayCells(['cell1']));
-    cy.mount(<BedTest store={store} />);
-    cy.get('body').mousedown(100, 100).mousemove(150, 50).mouseup(150, 50);
-    cy.get('[data-add-pointer]').should('have.attr', 'cx', 100).should('have.attr', 'cy', 50);
-  });
-
-  it('移动起点, 将调整线条的起点坐标', () => {
-    addLine(store, 'line1', [
-      { x: 50, y: 50 },
-      { x: 150, y: 150 },
-    ]);
-    store.dispatch(CellActions.selectDisplayCells(['line1']));
-    cy.mount(<BedTest store={store} />);
-    cy.get('[data-point-index="0"]').mousedown(2, 2).mousedown(2, 2);
-    cy.get('body').mousemove(0, 0).mouseup(0, 0);
-
-    cy.get('[data-cell-id="line1"] polyline').should('have.attr', 'points', '0,0 150,150');
   });
 
   describe('测试偏移左下角 100 px 的场景', () => {
@@ -221,6 +224,21 @@ describe('测试线条选择框', () => {
       cy.get('body').mousemove(300, 150).mouseup(300, 150);
 
       cy.get('[data-cell-id="line1"] polyline').should('have.attr', 'points', '300,150 300,300');
+    });
+
+    it('移动添加拐点按钮，将线条拐弯', () => {
+      cy.get('[data-add-pointer]').first().mousedown(2, 2).mousedown(2, 2);
+      cy.get('body').mousemove(300, 150).mouseup(300, 150);
+
+      cy.get('[data-cell-id="line1"] polyline').should('have.attr', 'points', '200,150 300,150 300,300');
+    });
+
+    it('移动添加拐点按钮，增加一个拐点', () => {
+      cy.get('[data-add-pointer]').first().mousedown(2, 2).mousedown(2, 2);
+      cy.get('body').mousemove(300, 150).mouseup(300, 150);
+
+      cy.get('[data-point-index="0"]').should('have.attr', 'cx', 300).should('have.attr', 'cy', 150);
+      cy.get('[data-point-index="1"]').should('have.attr', 'cx', 300).should('have.attr', 'cy', 300);
     });
   });
 });

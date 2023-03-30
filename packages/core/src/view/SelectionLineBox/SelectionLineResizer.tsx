@@ -15,17 +15,17 @@ export const SelectionLineResizer = ({ pointIndex, line }: { pointIndex?: number
 
   useDND(ref, {
     dragMovingHandler: ({ mouseMovePoint, isFirstMoving }) => {
-      const firstPoint = mouseMovePoint
+      const addPoint = mouseMovePoint
         .translateByPoint(translate)
         .scale(1 / scale)
         .toData();
       if (points && pointIndex === undefined) {
         const newPoints = isFirstMoving ? points : [...points].slice(1);
-        dispatch(CellActions.resizeLine({ id: lineId, points: [firstPoint, ...newPoints] }));
+        dispatch(CellActions.resizeLine({ id: lineId, points: [addPoint, ...newPoints] }));
         return;
       }
       if (points && ref.current) {
-        const newPoints = points.map((point, index) => (pointIndex === index ? firstPoint : { ...point }));
+        const newPoints = points.map((point, index) => (pointIndex === index ? addPoint : { ...point }));
         dispatch(CellActions.resizeLine({ id: lineId, points: newPoints, source: line.source }));
       }
     },

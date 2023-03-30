@@ -3,7 +3,6 @@ import { Provider } from 'react-redux';
 import { configureStore, Store } from '@reduxjs/toolkit';
 import { ToolkitStore } from '@reduxjs/toolkit/dist/configureStore';
 import { CellActions, CellReduce } from '../../store/CellSlice';
-import { RootState } from '../../store';
 import { CellStyle, PointData } from '../../store/type/Cell';
 
 const BedTest = ({ store }: { store: Store<unknown> }) => {
@@ -91,32 +90,26 @@ describe('测试线条选择框', () => {
   });
 
   it('移动起点, 将调整线条的起点坐标', () => {
-    addLine(store, 'cell1', [
+    addLine(store, 'line1', [
       { x: 50, y: 50 },
       { x: 150, y: 150 },
     ]);
-    store.dispatch(CellActions.selectDisplayCells(['cell1']));
+    store.dispatch(CellActions.selectDisplayCells(['line1']));
     cy.mount(<BedTest store={store} />);
-    cy.get('body')
-      .mousedown(50, 50)
-      .mousemove(0, 0)
-      .mouseup(0, 0)
-      .then(() => {
-        chai.expect((store.getState() as RootState).cell.map['cell1'].points).eql([
-          { x: 0, y: 0 },
-          { x: 150, y: 150 },
-        ]);
-      });
+    cy.get('[data-point-index="0"]').mousedown(2, 2).mousedown(2, 2);
+    cy.get('body').mousemove(0, 0).mouseup(0, 0);
+
+    cy.get('[data-cell-id="line1"] polyline').should('have.attr', 'points', '0,0 150,150');
   });
 
   describe('测试偏移左下角 100 px 的场景', () => {
     beforeEach(() => {
-      addLine(store, 'cell1', [
+      addLine(store, 'line1', [
         { x: 50, y: 50 },
         { x: 150, y: 150 },
       ]);
       store.dispatch(CellActions.translate({ x: 100, y: 100 }));
-      store.dispatch(CellActions.selectDisplayCells(['cell1']));
+      store.dispatch(CellActions.selectDisplayCells(['line1']));
       cy.mount(<BedTest store={store} />);
     });
 
@@ -126,16 +119,10 @@ describe('测试线条选择框', () => {
     });
 
     it('移动起点，将调整线条的起点坐标', () => {
-      cy.get('body')
-        .mousedown(150, 150)
-        .mousemove(100, 100)
-        .mouseup(100, 100)
-        .then(() => {
-          chai.expect((store.getState() as RootState).cell.map['cell1'].points).eql([
-            { x: 0, y: 0 },
-            { x: 150, y: 150 },
-          ]);
-        });
+      cy.get('[data-point-index="0"]').mousedown(2, 2).mousedown(2, 2);
+      cy.get('body').mousemove(100, 100).mouseup(100, 100);
+
+      cy.get('[data-cell-id="line1"] polyline').should('have.attr', 'points', '0,0 150,150');
     });
 
     it('移动增加拐点按钮，增加新的拐点', () => {
@@ -149,12 +136,12 @@ describe('测试线条选择框', () => {
 
   describe('测试缩放 200% 的场景', () => {
     beforeEach(() => {
-      addLine(store, 'cell1', [
+      addLine(store, 'line1', [
         { x: 50, y: 50 },
         { x: 150, y: 150 },
       ]);
       store.dispatch(CellActions.scale({ scale: 2, basePoint: { x: 0, y: 0 } }));
-      store.dispatch(CellActions.selectDisplayCells(['cell1']));
+      store.dispatch(CellActions.selectDisplayCells(['line1']));
       cy.mount(<BedTest store={store} />);
     });
 
@@ -164,16 +151,10 @@ describe('测试线条选择框', () => {
     });
 
     it('移动起点，将调整线条的起点坐标', () => {
-      cy.get('body')
-        .mousedown(100, 100)
-        .mousemove(50, 50)
-        .mouseup(50, 50)
-        .then(() => {
-          chai.expect((store.getState() as RootState).cell.map['cell1'].points).eql([
-            { x: 25, y: 25 },
-            { x: 150, y: 150 },
-          ]);
-        });
+      cy.get('[data-point-index="0"]').mousedown(2, 2).mousedown(2, 2);
+      cy.get('body').mousemove(50, 50).mouseup(50, 50);
+
+      cy.get('[data-cell-id="line1"] polyline').should('have.attr', 'points', '25,25 150,150');
     });
 
     it('移动增加拐点按钮，增加新的拐点', () => {
@@ -187,13 +168,13 @@ describe('测试线条选择框', () => {
 
   describe('测试偏移左下角 50 px 并缩放 200% 的场景', () => {
     beforeEach(() => {
-      addLine(store, 'cell1', [
+      addLine(store, 'line1', [
         { x: 50, y: 50 },
         { x: 150, y: 150 },
       ]);
       store.dispatch(CellActions.translate({ x: 50, y: 50 }));
       store.dispatch(CellActions.scale({ scale: 2, basePoint: { x: 0, y: 0 } }));
-      store.dispatch(CellActions.selectDisplayCells(['cell1']));
+      store.dispatch(CellActions.selectDisplayCells(['line1']));
       cy.mount(<BedTest store={store} />);
     });
 
@@ -203,16 +184,10 @@ describe('测试线条选择框', () => {
     });
 
     it('移动起点，将调整线条的起点坐标', () => {
-      cy.get('body')
-        .mousedown(200, 200)
-        .mousemove(100, 100)
-        .mouseup(100, 100)
-        .then(() => {
-          chai.expect((store.getState() as RootState).cell.map['cell1'].points).eql([
-            { x: 0, y: 0 },
-            { x: 150, y: 150 },
-          ]);
-        });
+      cy.get('[data-point-index="0"]').mousedown(2, 2).mousedown(2, 2);
+      cy.get('body').mousemove(100, 100).mouseup(100, 100);
+
+      cy.get('[data-cell-id="line1"] polyline').should('have.attr', 'points', '0,0 150,150');
     });
 
     it('移动增加拐点按钮，增加新的拐点', () => {
@@ -242,17 +217,10 @@ describe('测试线条选择框', () => {
     });
 
     it('移动起点，将调整线条的起点坐标', () => {
-      cy.get('body')
-        .mousedown(200, 150)
-        .mousemove(200, 150)
-        .mousemove(300, 150)
-        .mouseup(300, 150)
-        .then(() => {
-          chai.expect((store.getState() as RootState).cell.map['line1'].points).eql([
-            { x: 300, y: 150 },
-            { x: 300, y: 300 },
-          ]);
-        });
+      cy.get('[data-resizer-line]').first().mousedown(2, 2).mousedown(2, 2);
+      cy.get('body').mousemove(300, 150).mouseup(300, 150);
+
+      cy.get('[data-cell-id="line1"] polyline').should('have.attr', 'points', '300,150 300,300');
     });
   });
 });

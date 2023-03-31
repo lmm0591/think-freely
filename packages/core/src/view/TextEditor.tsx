@@ -27,6 +27,7 @@ export const TextEditor = memo(() => {
       contentEditable
       suppressContentEditableWarning
       data-placeholder="输入文本…"
+      data-text-editor
       ref={(event) => event?.focus()}
       onInput={({ target }) => {
         dispatch(CellActions.editCell({ id: editingCell.id, text: (target as HTMLDivElement).innerText }));

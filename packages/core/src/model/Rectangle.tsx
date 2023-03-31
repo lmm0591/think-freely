@@ -125,6 +125,10 @@ export class Rectangle extends Point {
     return new Point(this.left, this.bottom);
   }
 
+  getFourDirectionsPoints(): Point[] {
+    return [this.getPointTop(), this.getPointRight(), this.getPointBottom(), this.getPointLeft()];
+  }
+
   getPointTop(): Point {
     return new Point(this.centerX, this.top);
   }
@@ -277,5 +281,13 @@ export class Rectangle extends Point {
 
   getCenterPoint(): Point {
     return new Point(this.centerX, this.centerY);
+  }
+
+  contains(point: PointData) {
+    if (this.width <= 0 || this.height <= 0) {
+      return false;
+    }
+    const { x, y } = point;
+    return this.x <= x && this.x + this.width >= x && this.y <= y && this.y + this.height >= y;
   }
 }

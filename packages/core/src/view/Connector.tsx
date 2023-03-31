@@ -47,18 +47,14 @@ export const Connector = () => {
   const onlyOneCell = selectedCellIds.length === 1 && ableConnect(map[selectedCellIds[0]].type);
   if (onlyOneCell && cellRectangle) {
     const selectedId = selectedCellIds[0];
+    const [top, right, bottom, left] = cellRectangle.grow(14).getFourDirectionsPoints();
 
-    cellRectangle = cellRectangle.grow(14);
-    const topPoint = cellRectangle.getPointTop();
-    const rightPoint = cellRectangle.getPointRight();
-    const bottomPoint = cellRectangle.getPointBottom();
-    const leftPoint = cellRectangle.getPointLeft();
     return (
       <g data-connector>
-        <ConnectPoint point={topPoint} direction="N" id={selectedId}></ConnectPoint>
-        <ConnectPoint point={rightPoint} direction="E" id={selectedId}></ConnectPoint>
-        <ConnectPoint point={bottomPoint} direction="S" id={selectedId}></ConnectPoint>
-        <ConnectPoint point={leftPoint} direction="W" id={selectedId}></ConnectPoint>
+        <ConnectPoint point={top} direction="N" id={selectedId}></ConnectPoint>
+        <ConnectPoint point={right} direction="E" id={selectedId}></ConnectPoint>
+        <ConnectPoint point={bottom} direction="S" id={selectedId}></ConnectPoint>
+        <ConnectPoint point={left} direction="W" id={selectedId}></ConnectPoint>
       </g>
     );
   }

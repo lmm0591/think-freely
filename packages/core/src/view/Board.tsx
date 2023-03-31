@@ -18,6 +18,7 @@ import { Text } from './Text';
 import { Connector } from './Connector';
 import { DrawingLine } from './DrawingShape/DrawingLine';
 import { useDeleteCell, useSelectAllCell, useZoom } from '../hook/ShortcutKey';
+import { JoinBox } from './JoinBox';
 
 export const Board = () => {
   const cells = useSelector((state: RootState) => Object.values(state.cell.map));
@@ -92,6 +93,7 @@ export const Board = () => {
           <DrawingLine></DrawingLine>
         </g>
         <g className="mx-overlay">
+          <JoinBox></JoinBox>
           <SelectionBox></SelectionBox>
           <SelectionLine></SelectionLine>
           <Connector></Connector>

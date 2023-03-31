@@ -4,6 +4,7 @@ import { configureStore, Store } from '@reduxjs/toolkit';
 import { ToolkitStore } from '@reduxjs/toolkit/dist/configureStore';
 import { CellActions, CellReduce } from '../../store/CellSlice';
 import { CellStyle, PointData } from '../../store/type/Cell';
+import { RootState } from '../../store';
 
 const BedTest = ({ store }: { store: Store<unknown> }) => {
   return (
@@ -22,14 +23,14 @@ describe('测试线条选择框', () => {
 
   beforeEach(() => {
     store = configureStore({ reducer: { cell: CellReduce } });
-  });
-
-  it('显示选择框', () => {
-    addLine(store, 'cell1', [
+    addLine(store, 'line1', [
       { x: 50, y: 50 },
       { x: 150, y: 150 },
     ]);
-    store.dispatch(CellActions.selectDisplayCells(['cell1']));
+  });
+
+  it('显示选择框', () => {
+    store.dispatch(CellActions.selectDisplayCells(['line1']));
     cy.mount(<BedTest store={store} />);
 
     cy.get('.mx-line-selection-box').should('have.length', 1);
@@ -38,10 +39,6 @@ describe('测试线条选择框', () => {
   });
 
   it('显示增加拐点按钮', () => {
-    addLine(store, 'line1', [
-      { x: 50, y: 50 },
-      { x: 150, y: 150 },
-    ]);
     store.dispatch(CellActions.selectDisplayCells(['line1']));
     cy.mount(<BedTest store={store} />);
 
@@ -50,10 +47,6 @@ describe('测试线条选择框', () => {
   });
 
   it('移动增加拐点按钮，增加新的拐点', () => {
-    addLine(store, 'line1', [
-      { x: 50, y: 50 },
-      { x: 150, y: 150 },
-    ]);
     store.dispatch(CellActions.selectDisplayCells(['line1']));
     cy.mount(<BedTest store={store} />);
     cy.get('body').mousedown(100, 100).mousemove(150, 50).mouseup(150, 50);
@@ -62,16 +55,35 @@ describe('测试线条选择框', () => {
   });
 
   it('移动起点, 将调整线条的起点坐标', () => {
-    addLine(store, 'line1', [
-      { x: 50, y: 50 },
-      { x: 150, y: 150 },
-    ]);
     store.dispatch(CellActions.selectDisplayCells(['line1']));
     cy.mount(<BedTest store={store} />);
     cy.get('[data-point-index="0"]').mousedown(2, 2).mousedown(2, 2);
     cy.get('body').mousemove(0, 0).mouseup(0, 0);
 
     cy.get('[data-cell-id="line1"] polyline').should('have.attr', 'points', '0,0 150,150');
+  });
+
+  it('当修改线条大小时, operate.editId 将被标记', () => {
+    store.dispatch(CellActions.selectDisplayCells(['line1']));
+    cy.mount(<BedTest store={store} />);
+    cy.get('[data-point-index="0"]').mousedown(2, 2).mousedown(2, 2);
+    cy.get('body')
+      .mousemove(100, 100)
+      .then(() => {
+        chai.expect((store.getState() as RootState).cell.operate.editId).to.eql('line1');
+      });
+  });
+
+  it('当修改线条大小完成, operate.editId 将被清空标记', () => {
+    store.dispatch(CellActions.selectDisplayCells(['line1']));
+    cy.mount(<BedTest store={store} />);
+    cy.get('[data-point-index="0"]').mousedown(2, 2).mousedown(2, 2);
+    cy.get('body')
+      .mousemove(100, 100)
+      .mouseup(100, 100)
+      .then(() => {
+        chai.expect((store.getState() as RootState).cell.operate.editId).to.eql(undefined);
+      });
   });
 
   describe('测试显示折线场景', () => {

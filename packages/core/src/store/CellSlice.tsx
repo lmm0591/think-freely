@@ -28,7 +28,7 @@ export interface CellState {
   };
   operate: {
     rubberBand: boolean;
-    editId: string | undefined;
+    editId: string | undefined; // 标记正在编辑的cell 和 正在修改大小的线条
     scalePoint: PointData | undefined;
   };
 }
@@ -326,6 +326,9 @@ export const CellSlice = createSlice({
         state.map[cellId].text = text;
         state.operate.editId = undefined;
       }
+    },
+    finishResize(state) {
+      state.operate.editId = undefined;
     },
     deleteCells(state, { payload: { cellIds } }: PayloadAction<{ cellIds: string[] }>) {
       const connectLines = Object.values(state.map).filter((cell) => cell.type === 'LINE' && (cell.source || cell.target));

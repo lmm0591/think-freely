@@ -14,20 +14,29 @@ export const SelectionLineResizer = ({ pointIndex, line }: { pointIndex?: number
   const { translate, scale, map } = useSelector((state: RootState) => state.cell);
 
   useDND(ref, {
+    dragStartHandler: () => {
+      dispatch(CellActions.editingCell(line.id));
+    },
     dragMovingHandler: ({ mouseMovePoint, isFirstMoving }) => {
+      if (points === undefined) {
+        return;
+      }
       const addPoint = mouseMovePoint
         .translateByPoint(translate)
         .scale(1 / scale)
         .toData();
-      if (points && pointIndex === undefined) {
+      if (pointIndex === undefined) {
         const newPoints = isFirstMoving ? points : [...points].slice(1);
         dispatch(CellActions.resizeLine({ id: lineId, points: [addPoint, ...newPoints] }));
         return;
       }
-      if (points && ref.current) {
+      if (ref.current) {
         const newPoints = points.map((point, index) => (pointIndex === index ? addPoint : { ...point }));
         dispatch(CellActions.resizeLine({ id: lineId, points: newPoints, source: line.source }));
       }
+    },
+    dragEndHandler: () => {
+      dispatch(CellActions.finishResize());
     },
   });
 

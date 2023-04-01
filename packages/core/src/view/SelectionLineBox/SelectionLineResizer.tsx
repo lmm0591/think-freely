@@ -10,7 +10,7 @@ import { CellData, lineResizerType, RectangleData } from '../../store/type/Cell'
 export const SelectionLineResizer = ({ pointIndex, line, type }: { pointIndex?: number; line: CellData; type: lineResizerType }) => {
   const dispatch = useDispatch();
   const ref = useRef(null);
-  const { points, source, id: lineId } = line;
+  const { points, source, target, id: lineId } = line;
   const { translate, scale, map } = useSelector((state: RootState) => state.cell);
   useDND(ref, {
     dragStartHandler: () => {
@@ -30,26 +30,34 @@ export const SelectionLineResizer = ({ pointIndex, line, type }: { pointIndex?: 
         .scale(1 / scale)
         .toData();
 
-      if (type === 'source' || type === 'target') {
+      if (type === 'source') {
         const newPoints = isFirstMoving ? points : [...points].slice(1);
-        dispatch(CellActions.resizeLine({ id: lineId, points: [addPoint, ...newPoints] }));
+        dispatch(CellActions.resizeLine({ id: lineId, points: [addPoint, ...newPoints], target: line.target }));
         return;
       }
+      if (type === 'target') {
+        const newPoints = isFirstMoving ? points : [...points].slice(0, points.length - 1);
+        dispatch(CellActions.resizeLine({ id: lineId, points: [...newPoints, addPoint], source: line.source }));
+        return;
+      }
+
       if (type === 'point' && ref.current) {
         const newPoints = points.map((point, index) => (pointIndex === index ? addPoint : { ...point }));
-        dispatch(CellActions.resizeLine({ id: lineId, points: newPoints, source: line.source }));
+        dispatch(CellActions.resizeLine({ id: lineId, points: newPoints, source: line.source, target: line.target }));
       }
     },
     dragEndHandler: () => {
-      dispatch(CellActions.finishLineResize({ lineResizerType: type }));
+      dispatch(CellActions.finishLineResize({}));
     },
   });
 
   let point;
-  if (points && pointIndex !== undefined) {
+  if (type === 'point' && points && pointIndex !== undefined) {
     point = Point.from(points[pointIndex]).scale(scale).offsetByPoint(translate);
-  } else if (source && map[source.id].geometry) {
+  } else if (type === 'source' && source && map[source.id].geometry) {
     point = Rectangle.from(map[source.id].geometry as RectangleData).getPointByDirection(source.direction);
+  } else if (type === 'target' && target && map[target.id].geometry) {
+    point = Rectangle.from(map[target.id].geometry as RectangleData).getPointByDirection(target.direction);
   }
 
   return (

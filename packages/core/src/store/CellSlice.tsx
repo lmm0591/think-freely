@@ -246,13 +246,17 @@ export const CellSlice = createSlice({
       resizeRectCells(state, displayCells, oldDisplayRect, direction, vector);
       resizeLinePints(state, lineCells, oldDisplayRect, direction, vector);
     },
-    resizeLine: (state, { payload }: PayloadAction<{ id: string; points: PointData[]; source?: ConnectCellType }>) => {
+    resizeLine: (
+      state,
+      { payload }: PayloadAction<{ id: string; points: PointData[]; source?: ConnectCellType; target?: ConnectCellType }>,
+    ) => {
       const line = state.map[payload.id];
       if (line === undefined || !validatePoints({ ...payload, source: line.source, target: line.target })) {
         return;
       }
       line.points = payload.points;
       line.source = payload.source;
+      line.target = payload.target;
     },
     moveCell: (state, { payload }: PayloadAction<{ id: string; point: PointData }>) => {
       const cell = state.map[payload.id];
@@ -334,24 +338,23 @@ export const CellSlice = createSlice({
         state.operate.editId = undefined;
       }
     },
-    finishLineResize(
-      state,
-      { payload: { lineResizerType, connectCell } }: PayloadAction<{ lineResizerType?: lineResizerType; connectCell?: ConnectCellType }>,
-    ) {
+    finishLineResize(state, { payload: { connectCell } }: PayloadAction<{ connectCell?: ConnectCellType }>) {
       if (state.operate.editId === undefined || state.map[state.operate.editId].type !== 'LINE') {
         return;
       }
       if (connectCell) {
         const line = state.map[state.operate.editId] as CellData;
-        if (lineResizerType === 'target') {
+        const editLineResizerType = state.operate.editLineResizerType;
+        if (editLineResizerType === 'target') {
           line.target = connectCell;
           line.points?.pop();
-        } else if (lineResizerType === 'source') {
+        } else if (editLineResizerType === 'source') {
           line.source = connectCell;
           line.points?.shift();
         }
       }
       state.operate.editId = undefined;
+      state.operate.editLineResizerType = undefined;
     },
     deleteCells(state, { payload: { cellIds } }: PayloadAction<{ cellIds: string[] }>) {
       const connectLines = Object.values(state.map).filter((cell) => cell.type === 'LINE' && (cell.source || cell.target));

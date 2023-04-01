@@ -217,7 +217,7 @@ describe('测试偏移左下角 50 px 并缩放 200% 的场景', () => {
   });
 });
 
-describe('测试连接元素场景', () => {
+describe('测试起点连接元素场景', () => {
   beforeEach(() => {
     store = configureStore({ reducer: { cell: CellReduce } });
     store.dispatch(CellActions.addSticky({ id: 'cell1', geometry: { x: 100, y: 100, width: 100, height: 100 } }));
@@ -255,5 +255,22 @@ describe('测试连接元素场景', () => {
 
     cy.get('[data-point-index="0"]').should('have.attr', 'cx', 300).should('have.attr', 'cy', 150);
     cy.get('[data-point-index="1"]').should('have.attr', 'cx', 300).should('have.attr', 'cy', 300);
+  });
+});
+
+describe('测试终点连接元素场景', () => {
+  beforeEach(() => {
+    store = configureStore({ reducer: { cell: CellReduce } });
+    store.dispatch(CellActions.addSticky({ id: 'cell1', geometry: { x: 100, y: 100, width: 100, height: 100 } }));
+    store.dispatch(CellActions.addLine({ id: 'line1', points: [{ x: 300, y: 300 }], target: { id: 'cell1', direction: 'E' } }));
+    cy.mount(<BedTest store={store} />);
+    store.dispatch(CellActions.selectDisplayCells(['line1']));
+  });
+
+  it('移动终点，将调整线条的终点坐标', () => {
+    cy.get('[data-point-target]').mousedown(2, 2);
+    cy.get('body').mousemove(300, 150).mouseup(300, 150);
+
+    cy.get('[data-cell-id="line1"] polyline').should('have.attr', 'points', '300,300 300,150');
   });
 });

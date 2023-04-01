@@ -84,5 +84,72 @@ describe('测试被连接框', () => {
     });
   });
 
+  describe('测试便利贴与线条的起点连接', () => {
+    beforeEach(() => {
+      store.dispatch(CellActions.addSticky({ id: 'sticky1', geometry: { x: 50, y: 50, width: 100, height: 100 } }));
+      store.dispatch(
+        CellActions.addLine({
+          id: 'line1',
+          points: [{ x: 300, y: 200 }],
+          source: { id: 'sticky1', direction: 'E' },
+        }),
+      );
+      store.dispatch(CellActions.selectDisplayCells(['line1']));
+      cy.mount(<BedTest store={store} />);
+    });
+
+    it('拖动到 W 方向，将显示修改后的连接线', () => {
+      cy.get('[data-point-source]').mousedown(3, 3);
+      cy.get('body').mousemove(60, 100).mouseup(60, 100);
+
+      cy.get('[data-shape-line] polyline').should('have.attr', 'points', '50,100 300,200');
+    });
+
+    it('拖动到 W 方向，更新 cell 模型的连接属性', () => {
+      cy.get('[data-point-source]').mousedown(3, 3);
+      cy.get('body')
+        .mousemove(60, 100)
+        .mouseup(60, 100)
+        .then(() => {
+          const line = (store.getState() as RootState).cell.map['line1'];
+          chai.expect(line.source).to.contain({ id: 'sticky1', direction: 'W' });
+          chai.expect(line.target).to.undefined;
+        });
+    });
+  });
+
+  describe('测试便利贴与线条的终点连接', () => {
+    beforeEach(() => {
+      store.dispatch(CellActions.addSticky({ id: 'sticky1', geometry: { x: 50, y: 50, width: 100, height: 100 } }));
+      store.dispatch(
+        CellActions.addLine({
+          id: 'line1',
+          points: [{ x: 300, y: 200 }],
+          target: { id: 'sticky1', direction: 'E' },
+        }),
+      );
+      store.dispatch(CellActions.selectDisplayCells(['line1']));
+      cy.mount(<BedTest store={store} />);
+    });
+    it('拖动终点移动到 W 方向，将显示修改后的连接线', () => {
+      cy.get('[data-point-target]').mousedown(3, 3);
+      cy.get('body').mousemove(60, 100).mouseup(60, 100);
+
+      cy.get('[data-shape-line] polyline').should('have.attr', 'points', '300,200 50,100');
+    });
+
+    it('拖动到 W 方向，更新 cell 模型的连接属性', () => {
+      cy.get('[data-point-target]').mousedown(3, 3);
+      cy.get('body')
+        .mousemove(60, 100)
+        .mouseup(60, 100)
+        .then(() => {
+          const line = (store.getState() as RootState).cell.map['line1'];
+          chai.expect(line.target).to.contain({ id: 'sticky1', direction: 'W' });
+          chai.expect(line.source).to.undefined;
+        });
+    });
+  });
+
   xit('移动线条的终点位置到自己便利贴上，将不显示被连接框', () => {});
 });

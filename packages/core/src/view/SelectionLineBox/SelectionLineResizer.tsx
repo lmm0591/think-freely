@@ -5,9 +5,9 @@ import { Point } from '../../model/Point';
 import { Rectangle } from '../../model/Rectangle';
 import { RootState } from '../../store';
 import { CellActions } from '../../store/CellSlice';
-import { CellData, lineResizerType, RectangleData } from '../../store/type/Cell';
+import { CellData, LineResizerType, RectangleData } from '../../store/type/Cell';
 
-export const SelectionLineResizer = ({ pointIndex, line, type }: { pointIndex?: number; line: CellData; type: lineResizerType }) => {
+export const SelectionLineResizer = ({ pointIndex, line, type }: { pointIndex?: number; line: CellData; type: LineResizerType }) => {
   const dispatch = useDispatch();
   const ref = useRef(null);
   const { points, source, target, id: lineId } = line;
@@ -16,8 +16,8 @@ export const SelectionLineResizer = ({ pointIndex, line, type }: { pointIndex?: 
     dragStartHandler: () => {
       let editLineResizerType = type;
       if (type === 'point' && pointIndex !== undefined) {
-        pointIndex === 0 && (editLineResizerType = 'source');
-        pointIndex + 1 === points?.length && (editLineResizerType = 'target');
+        source === undefined && pointIndex === 0 && (editLineResizerType = 'source');
+        target === undefined && pointIndex + 1 === points?.length && (editLineResizerType = 'target');
       }
       dispatch(CellActions.editingCell({ id: line.id, editLineResizerType }));
     },

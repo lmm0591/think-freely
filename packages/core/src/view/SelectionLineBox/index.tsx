@@ -19,12 +19,11 @@ export const SelectionLine = () => {
           <SelectionLineResizer key={index} pointIndex={index} type="point" line={selectedLine}></SelectionLineResizer>
         ))}
         <SelectionLineResizer key="target-resizer" type="target" line={selectedLine}></SelectionLineResizer>
-
-        <AddPointer key="start-add-pointer" line={selectedLine}></AddPointer>
+        <AddPointer key="source-add-pointer" type="source" line={selectedLine}></AddPointer>
         {points.map((_, index) => {
           const isLastPoint = index === points.length - 1;
           if (!isLastPoint) {
-            return <AddPointer key={index} pointIndex={index} line={selectedLine}></AddPointer>;
+            return <AddPointer key={index} type="point" pointIndex={index} line={selectedLine}></AddPointer>;
           }
         })}
       </g>

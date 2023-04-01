@@ -14,7 +14,7 @@ import {
   GeometryCellData,
   PointCellData,
   PointData,
-  lineResizerType,
+  LineResizerType,
   RectangleData,
 } from './type/Cell';
 import { CalculateHeightDom, CalculateWidthDom } from '../lib/CalculateRectDom';
@@ -30,7 +30,7 @@ export interface CellState {
   operate: {
     rubberBand: boolean;
     editId?: string; // 标记正在编辑的cell 和 正在修改大小的线条
-    editLineResizerType?: lineResizerType; // 标记正在编辑大小的线条
+    editLineResizerType?: LineResizerType; // 标记正在编辑大小的线条
     scalePoint: PointData | undefined;
   };
 }
@@ -352,6 +352,7 @@ export const CellSlice = createSlice({
           line.source = connectCell;
           line.points?.shift();
         }
+        console.log('editLineResizerType: ', editLineResizerType, JSON.stringify(line), [...line.points]);
       }
       state.operate.editId = undefined;
       state.operate.editLineResizerType = undefined;

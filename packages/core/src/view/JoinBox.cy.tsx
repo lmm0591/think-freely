@@ -116,6 +116,14 @@ describe('测试被连接框', () => {
           chai.expect(line.target).to.undefined;
         });
     });
+
+    it('拖动终点到另一个便利贴，将显示修改后的连接线', () => {
+      store.dispatch(CellActions.addSticky({ id: 'sticky2', geometry: { x: 350, y: 50, width: 100, height: 100 } }));
+      cy.get('[data-point-index="0"]').mousedown(3, 3);
+      cy.get('body').mousemove(360, 100).mouseup(360, 100);
+
+      cy.get('[data-shape-line] polyline').should('have.attr', 'points', '150,100 350,100');
+    });
   });
 
   describe('测试便利贴与线条的终点连接', () => {
@@ -131,7 +139,7 @@ describe('测试被连接框', () => {
       store.dispatch(CellActions.selectDisplayCells(['line1']));
       cy.mount(<BedTest store={store} />);
     });
-    it('拖动终点移动到 W 方向，将显示修改后的连接线', () => {
+    it('拖动到 W 方向，将显示修改后的连接线', () => {
       cy.get('[data-point-target]').mousedown(3, 3);
       cy.get('body').mousemove(60, 100).mouseup(60, 100);
 
@@ -148,6 +156,14 @@ describe('测试被连接框', () => {
           chai.expect(line.target).to.contain({ id: 'sticky1', direction: 'W' });
           chai.expect(line.source).to.undefined;
         });
+    });
+
+    it('拖动起点到另一个便利贴，将显示修改后的连接线', () => {
+      store.dispatch(CellActions.addSticky({ id: 'sticky2', geometry: { x: 350, y: 50, width: 100, height: 100 } }));
+      cy.get('[data-point-index="0"]').mousedown(3, 3);
+      cy.get('body').mousemove(360, 100).mouseup(360, 100);
+
+      cy.get('[data-shape-line] polyline').should('have.attr', 'points', '350,100 150,100');
     });
   });
 

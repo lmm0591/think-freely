@@ -6,9 +6,9 @@ import { Point } from '../../model/Point';
 import { Rectangle } from '../../model/Rectangle';
 import { RootState } from '../../store';
 import { CellActions } from '../../store/CellSlice';
-import { CellData, PointData, RectangleData } from '../../store/type/Cell';
+import { CellData, LineResizerType, PointData, RectangleData } from '../../store/type/Cell';
 
-export const AddPointer = ({ pointIndex, line }: { pointIndex?: number; line: CellData }) => {
+export const AddPointer = ({ pointIndex, line, type }: { pointIndex?: number; line: CellData; type: LineResizerType }) => {
   const dispatch = useDispatch();
   const ref = useRef(null);
   const { translate, scale, map } = useSelector((state: RootState) => state.cell);
@@ -41,9 +41,9 @@ export const AddPointer = ({ pointIndex, line }: { pointIndex?: number; line: Ce
   });
 
   let midpoint: Point | undefined = undefined;
-  if (points && pointIndex !== undefined) {
+  if (type === 'point' && points && pointIndex !== undefined) {
     midpoint = new Line(Point.from(points[pointIndex]), Point.from(points[pointIndex + 1])).getMidpoint();
-  } else if (points && source && map[source.id].geometry) {
+  } else if (type === 'source' && points?.length && source && map[source.id].geometry) {
     const firstPoint = Rectangle.from(map[source.id].geometry as RectangleData).getPointByDirection(source.direction);
     midpoint = new Line(Point.from(firstPoint), Point.from(points[0])).getMidpoint();
   }

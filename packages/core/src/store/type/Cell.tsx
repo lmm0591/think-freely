@@ -19,7 +19,7 @@ export type ConnectCellType = {
   id: string;
   direction: DirectionFour;
 };
-export type lineResizerType = 'source' | 'target' | 'point';
+export type LineResizerType = 'source' | 'target' | 'point';
 export type CellData = {
   id: string;
   text?: string;

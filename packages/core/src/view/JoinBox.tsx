@@ -11,6 +11,7 @@ export const JoinBox = () => {
     const { map, operate } = state.cell;
     return operate.editId !== undefined && map[operate.editId]?.type === 'LINE';
   });
+  const translate = useSelector((state: RootState) => state.cell.translate);
   const dispatch = useDispatch();
   const joinCell = useJoinCell(isEditingLine);
   const { clientX, clientY } = useMouse();
@@ -18,7 +19,7 @@ export const JoinBox = () => {
     if (joinCell === undefined || joinCell.geometry === undefined) {
       return;
     }
-    const rectangle = Rectangle.from(joinCell.geometry);
+    const rectangle = Rectangle.from(joinCell.geometry).offsetByPoint(translate);
     const connector = [
       { direction: 'N' as DirectionFour, point: rectangle.getPointTop() },
       { direction: 'E' as DirectionFour, point: rectangle.getPointRight() },
@@ -42,7 +43,9 @@ export const JoinBox = () => {
     return <></>;
   }
 
-  const [top, right, bottom, left] = Rectangle.from(joinCell.geometry as RectangleData).getFourDirectionsPoints();
+  const [top, right, bottom, left] = Rectangle.from(joinCell.geometry as RectangleData)
+    .offsetByPoint(translate)
+    .getFourDirectionsPoints();
   return (
     <g data-join-box>
       <ellipse cx={top.x} cy={top.y} rx="3" ry="3" fill="#576ee0" opacity="0.5"></ellipse>
@@ -56,7 +59,7 @@ export const JoinBox = () => {
 
 function useJoinCell(isEditingLine: boolean) {
   const { clientX, clientY } = useMouse();
-
+  const translate = useSelector((state: RootState) => state.cell.translate);
   return useSelector((state: RootState) => {
     if (!isEditingLine) {
       return;
@@ -65,6 +68,7 @@ function useJoinCell(isEditingLine: boolean) {
       .filter((cell) => cell.geometry)
       .find((cell) => {
         return Rectangle.from(cell.geometry as RectangleData)
+          .offsetByPoint(translate)
           .grow(5)
           .contains({ x: clientX, y: clientY });
       });

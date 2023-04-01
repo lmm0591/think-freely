@@ -40,6 +40,10 @@ describe('测试被连接框', () => {
       cy.get('body').mousemove(150, 100);
 
       cy.get('[data-join-box]').should('exist');
+      cy.get('[data-join-box] ellipse:eq(0)').should('have.attr', 'cx', '100').should('have.attr', 'cy', '50');
+      cy.get('[data-join-box] ellipse:eq(1)').should('have.attr', 'cx', '150').should('have.attr', 'cy', '100');
+      cy.get('[data-join-box] ellipse:eq(2)').should('have.attr', 'cx', '100').should('have.attr', 'cy', '150');
+      cy.get('[data-join-box] ellipse:eq(3)').should('have.attr', 'cx', '50').should('have.attr', 'cy', '100');
     });
 
     it('拖动起点靠近便利贴，将显示被连接框', () => {
@@ -47,6 +51,10 @@ describe('测试被连接框', () => {
       cy.get('body').mousemove(150, 100);
 
       cy.get('[data-join-box]').should('exist');
+      cy.get('[data-join-box] ellipse:eq(0)').should('have.attr', 'cx', '100').should('have.attr', 'cy', '50');
+      cy.get('[data-join-box] ellipse:eq(1)').should('have.attr', 'cx', '150').should('have.attr', 'cy', '100');
+      cy.get('[data-join-box] ellipse:eq(2)').should('have.attr', 'cx', '100').should('have.attr', 'cy', '150');
+      cy.get('[data-join-box] ellipse:eq(3)').should('have.attr', 'cx', '50').should('have.attr', 'cy', '100');
     });
 
     it('终点与便利贴连接成功，显示修改后的连接线', () => {
@@ -81,6 +89,23 @@ describe('测试被连接框', () => {
         .then(() => {
           chai.expect((store.getState() as RootState).cell.map['line1'].source).to.contain({ id: 'sticky1', direction: 'E' });
         });
+    });
+
+    describe('测试偏移左下角 100 px 的场景', () => {
+      beforeEach(() => {
+        store.dispatch(CellActions.translate({ x: 100, y: 100 }));
+      });
+
+      it('拖动终点靠近便利贴，将显示被连接框', () => {
+        cy.get('[data-point-index="1"]').mousedown(3, 3);
+        cy.get('body').mousemove(150, 200);
+
+        cy.get('[data-join-box]').should('exist');
+        cy.get('[data-join-box] ellipse:eq(0)').should('have.attr', 'cx', '200').should('have.attr', 'cy', '150');
+        cy.get('[data-join-box] ellipse:eq(1)').should('have.attr', 'cx', '250').should('have.attr', 'cy', '200');
+        cy.get('[data-join-box] ellipse:eq(2)').should('have.attr', 'cx', '200').should('have.attr', 'cy', '250');
+        cy.get('[data-join-box] ellipse:eq(3)').should('have.attr', 'cx', '150').should('have.attr', 'cy', '200');
+      });
     });
   });
 

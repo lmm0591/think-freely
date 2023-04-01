@@ -149,6 +149,24 @@ describe('测试偏移左下角 100 px 的场景', () => {
     cy.get('[data-point-index="1"]').should('have.attr', 'cx', 300).should('have.attr', 'cy', 200);
     cy.get('[data-point-index="2"]').should('have.attr', 'cx', 250).should('have.attr', 'cy', 250);
   });
+
+  it('偏移左下角 100 px 连接起点, 显示选择框', () => {
+    store.dispatch(CellActions.addSticky({ id: 'sticky1', geometry: { x: 0, y: 0, width: 100, height: 100 } }));
+
+    cy.get('[data-point-index="0"]').mousedown(2, 2);
+    cy.get('body').mousemove(200, 140).mouseup(200, 140);
+
+    cy.get('[data-cell-id="line1"] polyline').should('have.attr', 'points', '100,50 150,150');
+  });
+
+  it('偏移左下角 100 px 连接终点, 显示选择框', () => {
+    store.dispatch(CellActions.addSticky({ id: 'sticky1', geometry: { x: 200, y: 200, width: 100, height: 100 } }));
+
+    cy.get('[data-point-index="1"]').mousedown(2, 2);
+    cy.get('body').mousemove(300, 340).mouseup(300, 340);
+
+    cy.get('[data-cell-id="line1"] polyline').should('have.attr', 'points', '50,50 200,250');
+  });
 });
 
 describe('测试缩放 200% 的场景', () => {

@@ -14,10 +14,11 @@ export const SelectionLine = () => {
   if (points) {
     return (
       <g className="mx-line-selection-box">
-        <SelectionLineResizer key="start-resizer" line={selectedLine}></SelectionLineResizer>
+        <SelectionLineResizer key="source-resizer" type="source" line={selectedLine}></SelectionLineResizer>
         {points.map((_, index) => (
-          <SelectionLineResizer key={index} pointIndex={index} line={selectedLine}></SelectionLineResizer>
+          <SelectionLineResizer key={index} pointIndex={index} type="point" line={selectedLine}></SelectionLineResizer>
         ))}
+        <SelectionLineResizer key="target-resizer" type="target" line={selectedLine}></SelectionLineResizer>
 
         <AddPointer key="start-add-pointer" line={selectedLine}></AddPointer>
         {points.map((_, index) => {

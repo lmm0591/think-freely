@@ -14,6 +14,7 @@ import {
   GeometryCellData,
   PointCellData,
   PointData,
+  PointerResizerType,
   RectangleData,
 } from './type/Cell';
 import { CalculateHeightDom, CalculateWidthDom } from '../lib/CalculateRectDom';
@@ -327,7 +328,25 @@ export const CellSlice = createSlice({
         state.operate.editId = undefined;
       }
     },
-    finishResize(state) {
+    finishLineResize(
+      state,
+      {
+        payload: { pointerResizerType, connectCell },
+      }: PayloadAction<{ pointerResizerType: PointerResizerType; connectCell?: ConnectCellType }>,
+    ) {
+      if (state.operate.editId === undefined || state.map[state.operate.editId].type !== 'LINE') {
+        return;
+      }
+      if (connectCell) {
+        const line = state.map[state.operate.editId] as CellData;
+        if (pointerResizerType === 'target') {
+          line.target = connectCell;
+          line.points?.pop();
+        } else if (pointerResizerType === 'source') {
+          line.source = connectCell;
+          line.points?.shift();
+        }
+      }
       state.operate.editId = undefined;
     },
     deleteCells(state, { payload: { cellIds } }: PayloadAction<{ cellIds: string[] }>) {

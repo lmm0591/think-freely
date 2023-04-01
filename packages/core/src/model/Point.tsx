@@ -37,14 +37,14 @@ export class Point {
     return new Point(this.x, this.y);
   }
 
-  getDistance(targetPoint: Point) {
+  getDistance(targetPoint: PointData) {
     const dx = this.x - targetPoint.x;
     const dy = this.y - targetPoint.y;
 
     return Math.sqrt(dx * dx + dy * dy);
   }
 
-  getRelativePoint(targetPoint: Point) {
+  getRelativePoint(targetPoint: PointData) {
     const dx = this.x - targetPoint.x;
     const dy = this.y - targetPoint.y;
 

@@ -5,14 +5,13 @@ import { Point } from '../../model/Point';
 import { Rectangle } from '../../model/Rectangle';
 import { RootState } from '../../store';
 import { CellActions } from '../../store/CellSlice';
-import { CellData, RectangleData } from '../../store/type/Cell';
+import { CellData, PointerResizerType, RectangleData } from '../../store/type/Cell';
 
-export const SelectionLineResizer = ({ pointIndex, line }: { pointIndex?: number; line: CellData }) => {
+export const SelectionLineResizer = ({ pointIndex, line, type }: { pointIndex?: number; line: CellData; type: PointerResizerType }) => {
   const dispatch = useDispatch();
   const ref = useRef(null);
   const { points, source, id: lineId } = line;
   const { translate, scale, map } = useSelector((state: RootState) => state.cell);
-
   useDND(ref, {
     dragStartHandler: () => {
       dispatch(CellActions.editingCell(line.id));
@@ -25,18 +24,19 @@ export const SelectionLineResizer = ({ pointIndex, line }: { pointIndex?: number
         .translateByPoint(translate)
         .scale(1 / scale)
         .toData();
-      if (pointIndex === undefined) {
+
+      if (type === 'source' || type === 'target') {
         const newPoints = isFirstMoving ? points : [...points].slice(1);
         dispatch(CellActions.resizeLine({ id: lineId, points: [addPoint, ...newPoints] }));
         return;
       }
-      if (ref.current) {
+      if (type === 'point' && ref.current) {
         const newPoints = points.map((point, index) => (pointIndex === index ? addPoint : { ...point }));
         dispatch(CellActions.resizeLine({ id: lineId, points: newPoints, source: line.source }));
       }
     },
     dragEndHandler: () => {
-      dispatch(CellActions.finishResize());
+      dispatch(CellActions.finishLineResize({ pointerResizerType: type }));
     },
   });
 
@@ -52,7 +52,8 @@ export const SelectionLineResizer = ({ pointIndex, line }: { pointIndex?: number
       ref={ref}
       data-resizer-line
       data-point-index={pointIndex}
-      data-point-source={source}
+      data-point-source={type === 'source' ? 'true' : undefined}
+      data-point-target={type === 'target' ? 'true' : undefined}
       style={{ display: point ? 'block' : 'none' }}
       cx={point?.x}
       cy={point?.y}

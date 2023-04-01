@@ -1,23 +1,49 @@
-import { useMouse } from 'ahooks';
-import { useSelector } from 'react-redux';
+import { useMouse, useEventListener } from 'ahooks';
+import { useDispatch, useSelector } from 'react-redux';
 import { Rectangle } from '../model/Rectangle';
 import { RootState } from '../store';
+import { CellActions } from '../store/CellSlice';
 import { RectangleData } from '../store/type/Cell';
+import { DirectionFour } from './type/SelectionBox';
 
 export const JoinBox = () => {
   const isEditingLine = useSelector((state: RootState) => {
     const { map, operate } = state.cell;
     return operate.editId !== undefined && map[operate.editId]?.type === 'LINE';
   });
-
+  const dispatch = useDispatch();
   const joinCell = useJoinCell(isEditingLine);
+  const { clientX, clientY } = useMouse();
+  useEventListener('mouseup', () => {
+    if (joinCell === undefined || joinCell.geometry === undefined) {
+      return;
+    }
+    const rectangle = Rectangle.from(joinCell.geometry);
+    const connector = [
+      { direction: 'N' as DirectionFour, point: rectangle.getPointTop() },
+      { direction: 'E' as DirectionFour, point: rectangle.getPointRight() },
+      { direction: 'S' as DirectionFour, point: rectangle.getPointBottom() },
+      { direction: 'W' as DirectionFour, point: rectangle.getPointLeft() },
+    ].sort(
+      ({ point: pointA }, { point: pointB }) =>
+        pointA.getDistance({ x: clientX, y: clientY }) - pointB.getDistance({ x: clientX, y: clientY }),
+    )[0];
 
+    dispatch(
+      CellActions.finishLineResize({
+        pointerResizerType: 'target',
+        connectCell: {
+          id: joinCell.id,
+          direction: connector.direction,
+        },
+      }),
+    );
+  });
   if (joinCell === undefined) {
     return <></>;
   }
 
   const [top, right, bottom, left] = Rectangle.from(joinCell.geometry as RectangleData).getFourDirectionsPoints();
-
   return (
     <g data-join-box>
       <ellipse cx={top.x} cy={top.y} rx="3" ry="3" fill="#576ee0" opacity="0.5"></ellipse>

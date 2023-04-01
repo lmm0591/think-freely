@@ -3,9 +3,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useDND } from '../hook/useDND';
 import { RootState } from '../store';
 import { CellActions } from '../store/CellSlice';
-import { Rectangle } from '../model/Rectangle';
-import { DirectionFour } from './type/SelectionBox';
-import { CellData } from '../store/type/Cell';
 import { useLinePoints } from '../hook/useLinePoints';
 
 export const Line = memo(({ cellId }: { cellId: string }) => {

@@ -1,5 +1,6 @@
 import { useMouse, useEventListener } from 'ahooks';
 import { useDispatch, useSelector } from 'react-redux';
+import { Point } from '../model/Point';
 import { Rectangle } from '../model/Rectangle';
 import { RootState } from '../store';
 import { CellActions } from '../store/CellSlice';
@@ -11,24 +12,22 @@ export const JoinBox = () => {
     const { map, operate } = state.cell;
     return operate.editId !== undefined && map[operate.editId]?.type === 'LINE';
   });
-  const translate = useSelector((state: RootState) => state.cell.translate);
+  const { translate, scale } = useSelector((state: RootState) => state.cell);
   const dispatch = useDispatch();
   const joinCell = useJoinCell(isEditingLine);
   const { clientX, clientY } = useMouse();
+  const mousePoint = new Point(clientX, clientY).scale(1 / scale).translateByPoint(translate);
   useEventListener('mouseup', () => {
     if (joinCell === undefined || joinCell.geometry === undefined) {
       return;
     }
-    const rectangle = Rectangle.from(joinCell.geometry).offsetByPoint(translate);
+    const rectangle = Rectangle.from(joinCell.geometry);
     const connector = [
       { direction: 'N' as DirectionFour, point: rectangle.getPointTop() },
       { direction: 'E' as DirectionFour, point: rectangle.getPointRight() },
       { direction: 'S' as DirectionFour, point: rectangle.getPointBottom() },
       { direction: 'W' as DirectionFour, point: rectangle.getPointLeft() },
-    ].sort(
-      ({ point: pointA }, { point: pointB }) =>
-        pointA.getDistance({ x: clientX, y: clientY }) - pointB.getDistance({ x: clientX, y: clientY }),
-    )[0];
+    ].sort(({ point: pointA }, { point: pointB }) => pointA.getDistance(mousePoint) - pointB.getDistance(mousePoint))[0];
 
     dispatch(
       CellActions.finishLineResize({
@@ -44,8 +43,9 @@ export const JoinBox = () => {
   }
 
   const [top, right, bottom, left] = Rectangle.from(joinCell.geometry as RectangleData)
-    .offsetByPoint(translate)
-    .getFourDirectionsPoints();
+    .getFourDirectionsPoints()
+    .map((point) => point.scale(scale).offsetByPoint(translate));
+
   return (
     <g data-join-box>
       <ellipse cx={top.x} cy={top.y} rx="3" ry="3" fill="#576ee0" opacity="0.5"></ellipse>
@@ -59,7 +59,7 @@ export const JoinBox = () => {
 
 function useJoinCell(isEditingLine: boolean) {
   const { clientX, clientY } = useMouse();
-  const translate = useSelector((state: RootState) => state.cell.translate);
+  const { translate, scale } = useSelector((state: RootState) => state.cell);
   return useSelector((state: RootState) => {
     if (!isEditingLine) {
       return;
@@ -68,6 +68,7 @@ function useJoinCell(isEditingLine: boolean) {
       .filter((cell) => cell.geometry)
       .find((cell) => {
         return Rectangle.from(cell.geometry as RectangleData)
+          .scale(scale, scale, { x: 0, y: 0 })
           .offsetByPoint(translate)
           .grow(5)
           .contains({ x: clientX, y: clientY });

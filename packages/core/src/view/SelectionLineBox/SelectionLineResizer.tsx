@@ -56,12 +56,14 @@ export const SelectionLineResizer = ({ pointIndex, line, type }: { pointIndex?: 
     point = Point.from(points[pointIndex]).scale(scale).offsetByPoint(translate);
   } else if (type === 'source' && source && map[source.id].geometry) {
     point = Rectangle.from(map[source.id].geometry as RectangleData)
-      .offsetByPoint(translate)
-      .getPointByDirection(source.direction);
+      .getPointByDirection(source.direction)
+      .scale(scale)
+      .offsetByPoint(translate);
   } else if (type === 'target' && target && map[target.id].geometry) {
     point = Rectangle.from(map[target.id].geometry as RectangleData)
-      .offsetByPoint(translate)
-      .getPointByDirection(target.direction);
+      .getPointByDirection(target.direction)
+      .scale(scale)
+      .offsetByPoint(translate);
   }
 
   return (

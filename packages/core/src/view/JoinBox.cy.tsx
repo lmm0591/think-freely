@@ -107,6 +107,24 @@ describe('测试被连接框', () => {
         cy.get('[data-join-box] ellipse:eq(3)').should('have.attr', 'cx', '150').should('have.attr', 'cy', '200');
       });
     });
+
+    describe('测试缩放 200% 的场景', () => {
+      beforeEach(() => {
+        cy.viewport(800, 800);
+        store.dispatch(CellActions.scale({ scale: 2, basePoint: { x: 0, y: 0 } }));
+      });
+
+      it('拖动终点靠近便利贴，将显示被连接框', () => {
+        cy.get('[data-point-index="1"]').mousedown(3, 3);
+        cy.get('body').mousemove(110, 200);
+
+        cy.get('[data-join-box]').should('exist');
+        cy.get('[data-join-box] ellipse:eq(0)').should('have.attr', 'cx', '200').should('have.attr', 'cy', '100');
+        cy.get('[data-join-box] ellipse:eq(1)').should('have.attr', 'cx', '300').should('have.attr', 'cy', '200');
+        cy.get('[data-join-box] ellipse:eq(2)').should('have.attr', 'cx', '200').should('have.attr', 'cy', '300');
+        cy.get('[data-join-box] ellipse:eq(3)').should('have.attr', 'cx', '100').should('have.attr', 'cy', '200');
+      });
+    });
   });
 
   describe('测试便利贴与线条的起点连接', () => {

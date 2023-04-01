@@ -47,7 +47,7 @@ describe('测试全选快捷键元素', () => {
   });
 
   it('当输入文字时不触发全选', () => {
-    store.dispatch(CellActions.editingCell('cell1'));
+    store.dispatch(CellActions.editingCell({ id: 'cell1' }));
     cy.get('body')
       .type('{cmd}a')
       .then(() => {

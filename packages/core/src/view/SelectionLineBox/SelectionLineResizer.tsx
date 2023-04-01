@@ -5,16 +5,21 @@ import { Point } from '../../model/Point';
 import { Rectangle } from '../../model/Rectangle';
 import { RootState } from '../../store';
 import { CellActions } from '../../store/CellSlice';
-import { CellData, PointerResizerType, RectangleData } from '../../store/type/Cell';
+import { CellData, lineResizerType, RectangleData } from '../../store/type/Cell';
 
-export const SelectionLineResizer = ({ pointIndex, line, type }: { pointIndex?: number; line: CellData; type: PointerResizerType }) => {
+export const SelectionLineResizer = ({ pointIndex, line, type }: { pointIndex?: number; line: CellData; type: lineResizerType }) => {
   const dispatch = useDispatch();
   const ref = useRef(null);
   const { points, source, id: lineId } = line;
   const { translate, scale, map } = useSelector((state: RootState) => state.cell);
   useDND(ref, {
     dragStartHandler: () => {
-      dispatch(CellActions.editingCell(line.id));
+      let editLineResizerType = type;
+      if (type === 'point' && pointIndex !== undefined) {
+        pointIndex === 0 && (editLineResizerType = 'source');
+        pointIndex + 1 === points?.length && (editLineResizerType = 'target');
+      }
+      dispatch(CellActions.editingCell({ id: line.id, editLineResizerType }));
     },
     dragMovingHandler: ({ mouseMovePoint, isFirstMoving }) => {
       if (points === undefined) {
@@ -36,7 +41,7 @@ export const SelectionLineResizer = ({ pointIndex, line, type }: { pointIndex?: 
       }
     },
     dragEndHandler: () => {
-      dispatch(CellActions.finishLineResize({ pointerResizerType: type }));
+      dispatch(CellActions.finishLineResize({ lineResizerType: type }));
     },
   });
 

@@ -14,7 +14,7 @@ import {
   GeometryCellData,
   PointCellData,
   PointData,
-  PointerResizerType,
+  lineResizerType,
   RectangleData,
 } from './type/Cell';
 import { CalculateHeightDom, CalculateWidthDom } from '../lib/CalculateRectDom';
@@ -29,7 +29,8 @@ export interface CellState {
   };
   operate: {
     rubberBand: boolean;
-    editId: string | undefined; // 标记正在编辑的cell 和 正在修改大小的线条
+    editId?: string; // 标记正在编辑的cell 和 正在修改大小的线条
+    editLineResizerType?: lineResizerType; // 标记正在编辑大小的线条
     scalePoint: PointData | undefined;
   };
 }
@@ -273,11 +274,16 @@ export const CellSlice = createSlice({
     operateRubberBand: (state, { payload }: PayloadAction<boolean>) => {
       state.operate.rubberBand = payload;
     },
-    editingCell: (state, { payload }: PayloadAction<string>) => {
-      if (state.map[payload]) {
-        state.operate.editId = payload;
+    editingCell: (
+      state,
+      { payload: { id, editLineResizerType } }: PayloadAction<{ id: string; editLineResizerType?: lineResizerType }>,
+    ) => {
+      if (state.map[id]) {
+        state.operate.editId = id;
+        state.operate.editLineResizerType = editLineResizerType;
       } else {
         state.operate.editId = undefined;
+        state.operate.editLineResizerType = undefined;
       }
     },
     editCell: (state, { payload }: PayloadAction<{ id: string; text: string }>) => {
@@ -330,19 +336,17 @@ export const CellSlice = createSlice({
     },
     finishLineResize(
       state,
-      {
-        payload: { pointerResizerType, connectCell },
-      }: PayloadAction<{ pointerResizerType: PointerResizerType; connectCell?: ConnectCellType }>,
+      { payload: { lineResizerType, connectCell } }: PayloadAction<{ lineResizerType?: lineResizerType; connectCell?: ConnectCellType }>,
     ) {
       if (state.operate.editId === undefined || state.map[state.operate.editId].type !== 'LINE') {
         return;
       }
       if (connectCell) {
         const line = state.map[state.operate.editId] as CellData;
-        if (pointerResizerType === 'target') {
+        if (lineResizerType === 'target') {
           line.target = connectCell;
           line.points?.pop();
-        } else if (pointerResizerType === 'source') {
+        } else if (lineResizerType === 'source') {
           line.source = connectCell;
           line.points?.shift();
         }

@@ -39,7 +39,7 @@ describe('测试文本编辑器', () => {
 
   it('当显示文本编辑器时，将与元素的位置一致', () => {
     store.dispatch(CellActions.addSticky({ id: 'cell1', geometry: { x: 50, y: 100, width: 70, height: 60 } }));
-    store.dispatch(CellActions.editingCell('cell1'));
+    store.dispatch(CellActions.editingCell({ id: 'cell1' }));
     cy.mount(<BedTest store={store} />);
     cy.get('svg').then(() => {
       const { left, top, position } = (document.querySelector('.mxCellEditor') as HTMLDivElement).style;
@@ -51,7 +51,7 @@ describe('测试文本编辑器', () => {
 
   it('当显示文本编辑器时，将与元素的大小一致', () => {
     store.dispatch(CellActions.addSticky({ id: 'cell1', geometry: { x: 50, y: 100, width: 70, height: 60 } }));
-    store.dispatch(CellActions.editingCell('cell1'));
+    store.dispatch(CellActions.editingCell({ id: 'cell1' }));
     cy.mount(<BedTest store={store} />);
 
     cy.get('svg').then(() => {
@@ -65,7 +65,7 @@ describe('测试文本编辑器', () => {
     beforeEach(() => {
       store.dispatch(CellActions.scale({ scale: 2, basePoint: { x: 0, y: 0 } }));
       store.dispatch(CellActions.addSticky({ id: 'cell1', geometry: { x: 50, y: 50, width: 100, height: 100 } }));
-      store.dispatch(CellActions.editingCell('cell1'));
+      store.dispatch(CellActions.editingCell({ id: 'cell1' }));
       cy.mount(<BedTest store={store} />);
     });
 
@@ -91,7 +91,7 @@ describe('测试文本编辑器', () => {
     beforeEach(() => {
       store.dispatch(CellActions.translate({ x: 50, y: 50 }));
       store.dispatch(CellActions.addSticky({ id: 'cell1', geometry: { x: 50, y: 50, width: 100, height: 100 } }));
-      store.dispatch(CellActions.editingCell('cell1'));
+      store.dispatch(CellActions.editingCell({ id: 'cell1' }));
       cy.mount(<BedTest store={store} />);
     });
 
@@ -109,7 +109,7 @@ describe('测试文本编辑器', () => {
       store.dispatch(CellActions.translate({ x: 50, y: 50 }));
       store.dispatch(CellActions.scale({ scale: 2, basePoint: { x: 0, y: 0 } }));
       store.dispatch(CellActions.addSticky({ id: 'cell1', geometry: { x: 50, y: 50, width: 100, height: 100 } }));
-      store.dispatch(CellActions.editingCell('cell1'));
+      store.dispatch(CellActions.editingCell({ id: 'cell1' }));
       cy.mount(<BedTest store={store} />);
     });
 
@@ -133,7 +133,7 @@ describe('测试文本编辑器', () => {
 
   it('当显示文本编辑器时，元素的文本临时隐藏', () => {
     store.dispatch(CellActions.addSticky({ id: 'cell1', geometry: { x: 50, y: 50, width: 100, height: 100 } }));
-    store.dispatch(CellActions.editingCell('cell1'));
+    store.dispatch(CellActions.editingCell({ id: 'cell1' }));
     cy.mount(<BedTest store={store} />);
 
     cy.get("[data-cell-id='cell1'] foreignObject").should('not.be.visible');
@@ -141,7 +141,7 @@ describe('测试文本编辑器', () => {
 
   it('当显示文本编辑器时，编辑器的文字与元素的文字相同', () => {
     store.dispatch(CellActions.addSticky({ id: 'cell1', text: 'hello', geometry: { x: 50, y: 50, width: 100, height: 100 } }));
-    store.dispatch(CellActions.editingCell('cell1'));
+    store.dispatch(CellActions.editingCell({ id: 'cell1' }));
     cy.mount(<BedTest store={store} />);
 
     cy.get('.mxCellEditor').should('have.text', 'hello');
@@ -150,7 +150,7 @@ describe('测试文本编辑器', () => {
   describe('修改编辑器文字场景', () => {
     beforeEach(() => {
       store.dispatch(CellActions.addText({ id: 'text1', text: 'hello', geometry: { x: 50, y: 50, width: 100, height: 20 } }));
-      store.dispatch(CellActions.editingCell('text1'));
+      store.dispatch(CellActions.editingCell({ id: 'text1' }));
       cy.mount(<BedTest store={store} />);
     });
 
@@ -193,7 +193,7 @@ describe('测试文本编辑器', () => {
   describe('测试点击空白位置场景', () => {
     it('隐藏文本编辑器，恢复文本显示', () => {
       store.dispatch(CellActions.addSticky({ id: 'cell1', geometry: { x: 50, y: 50, width: 100, height: 100 } }));
-      store.dispatch(CellActions.editingCell('cell1'));
+      store.dispatch(CellActions.editingCell({ id: 'cell1' }));
       cy.mount(<BedTest store={store} />);
 
       cy.get('body').click();
@@ -203,7 +203,7 @@ describe('测试文本编辑器', () => {
 
     it('保存编辑中的文字', () => {
       store.dispatch(CellActions.addSticky({ id: 'cell1', geometry: { x: 50, y: 50, width: 100, height: 100 } }));
-      store.dispatch(CellActions.editingCell('cell1'));
+      store.dispatch(CellActions.editingCell({ id: 'cell1' }));
       cy.mount(<BedTest store={store} />);
 
       cy.get('.mxCellEditor').type('H');
@@ -215,7 +215,7 @@ describe('测试文本编辑器', () => {
     it('当没有修改文本失去焦点时，不会触发 finishEditing Action', () => {
       cy.spy(CellActions, 'finishEditing');
       store.dispatch(CellActions.addSticky({ id: 'cell1', text: 'Hello', geometry: { x: 50, y: 50, width: 100, height: 100 } }));
-      store.dispatch(CellActions.editingCell('cell1'));
+      store.dispatch(CellActions.editingCell({ id: 'cell1' }));
       cy.mount(<BedTest store={store} />);
 
       cy.get('body').click();

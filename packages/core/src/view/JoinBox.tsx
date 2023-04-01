@@ -11,6 +11,7 @@ export const JoinBox = () => {
     const { map, operate } = state.cell;
     return operate.editId !== undefined && map[operate.editId]?.type === 'LINE';
   });
+  const editLineResizerType = useSelector((state: RootState) => state.cell.operate.editLineResizerType);
   const dispatch = useDispatch();
   const joinCell = useJoinCell(isEditingLine);
   const { clientX, clientY } = useMouse();
@@ -31,7 +32,7 @@ export const JoinBox = () => {
 
     dispatch(
       CellActions.finishLineResize({
-        pointerResizerType: 'target',
+        lineResizerType: editLineResizerType,
         connectCell: {
           id: joinCell.id,
           direction: connector.direction,

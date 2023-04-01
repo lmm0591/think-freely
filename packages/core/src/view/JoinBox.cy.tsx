@@ -42,11 +42,25 @@ describe('测试被连接框', () => {
       cy.get('[data-join-box]').should('exist');
     });
 
+    it('拖动起点靠近便利贴，将显示被连接框', () => {
+      cy.get('[data-point-index="0"]').mousedown(3, 3);
+      cy.get('body').mousemove(150, 100);
+
+      cy.get('[data-join-box]').should('exist');
+    });
+
     it('终点与便利贴连接成功，显示修改后的连接线', () => {
       cy.get('[data-point-index="1"]').mousedown(3, 3);
       cy.get('body').mousemove(150, 100).mouseup(150, 100);
 
       cy.get('[data-shape-line] polyline').should('have.attr', 'points', '250,100 150,100');
+    });
+
+    it('起点与便利贴连接成功，显示修改后的连接线', () => {
+      cy.get('[data-point-index="0"]').mousedown(3, 3);
+      cy.get('body').mousemove(150, 100).mouseup(150, 100);
+
+      cy.get('[data-shape-line] polyline').should('have.attr', 'points', '150,100 300,200');
     });
 
     it('终点与便利贴连接成功，更新 cell 模型的 target 属性', () => {
@@ -56,6 +70,16 @@ describe('测试被连接框', () => {
         .mouseup(150, 100)
         .then(() => {
           chai.expect((store.getState() as RootState).cell.map['line1'].target).to.contain({ id: 'sticky1', direction: 'E' });
+        });
+    });
+
+    it('起点与便利贴连接成功，更新 cell 模型的 source 属性', () => {
+      cy.get('[data-point-index="0"]').mousedown(3, 3);
+      cy.get('body')
+        .mousemove(150, 100)
+        .mouseup(150, 100)
+        .then(() => {
+          chai.expect((store.getState() as RootState).cell.map['line1'].source).to.contain({ id: 'sticky1', direction: 'E' });
         });
     });
   });

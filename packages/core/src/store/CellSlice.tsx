@@ -352,7 +352,6 @@ export const CellSlice = createSlice({
           line.source = connectCell;
           line.points?.shift();
         }
-        console.log('editLineResizerType: ', editLineResizerType, JSON.stringify(line), [...line.points]);
       }
       state.operate.editId = undefined;
       state.operate.editLineResizerType = undefined;

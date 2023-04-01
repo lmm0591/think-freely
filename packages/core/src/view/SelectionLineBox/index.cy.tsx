@@ -106,10 +106,11 @@ describe('测试显示折线场景', () => {
   });
 
   it('显示多个创建拐点', () => {
-    cy.get('[data-add-pointer]').should('have.length', 3);
+    cy.get('[data-add-pointer]').should('have.length', 4);
     cy.get('[data-add-pointer]').eq(0).should('not.visible');
     cy.get('[data-add-pointer]').eq(1).should('have.attr', 'cx', 100).should('have.attr', 'cy', 50);
     cy.get('[data-add-pointer]').eq(2).should('have.attr', 'cx', 100).should('have.attr', 'cy', 100);
+    cy.get('[data-add-pointer]').eq(3).should('not.visible');
   });
 
   it('显示多条线段', () => {
@@ -261,16 +262,71 @@ describe('测试起点连接元素场景', () => {
 describe('测试终点连接元素场景', () => {
   beforeEach(() => {
     store = configureStore({ reducer: { cell: CellReduce } });
-    store.dispatch(CellActions.addSticky({ id: 'cell1', geometry: { x: 100, y: 100, width: 100, height: 100 } }));
-    store.dispatch(CellActions.addLine({ id: 'line1', points: [{ x: 300, y: 300 }], target: { id: 'cell1', direction: 'E' } }));
+    store.dispatch(CellActions.addSticky({ id: 'sticky1', geometry: { x: 300, y: 100, width: 100, height: 100 } }));
+    store.dispatch(CellActions.addLine({ id: 'line1', points: [{ x: 100, y: 100 }], target: { id: 'sticky1', direction: 'W' } }));
     cy.mount(<BedTest store={store} />);
     store.dispatch(CellActions.selectDisplayCells(['line1']));
   });
 
+  it('显示选择框', () => {
+    cy.get('[data-point-target]').should('have.attr', 'cx', 300).should('have.attr', 'cy', 150);
+    cy.get('[data-point-index="0"]').should('have.attr', 'cx', 100).should('have.attr', 'cy', 100);
+  });
+
+  it('显示增加节点按钮', () => {
+    cy.get('[data-add-pointer]').last().should('have.attr', 'cx', 200).should('have.attr', 'cy', 125);
+  });
+
   it('移动终点，将调整线条的终点坐标', () => {
     cy.get('[data-point-target]').mousedown(2, 2);
-    cy.get('body').mousemove(300, 150).mouseup(300, 150);
+    cy.get('body').mousemove(390, 150).mouseup(390, 150);
 
-    cy.get('[data-cell-id="line1"] polyline').should('have.attr', 'points', '300,300 300,150');
+    cy.get('[data-cell-id="line1"] polyline').should('have.attr', 'points', '100,100 400,150');
+  });
+});
+
+describe('测试起点终点都连接元素场景', () => {
+  beforeEach(() => {
+    store = configureStore({ reducer: { cell: CellReduce } });
+    store.dispatch(CellActions.addSticky({ id: 'sticky1', geometry: { x: 100, y: 100, width: 100, height: 100 } }));
+    store.dispatch(CellActions.addSticky({ id: 'sticky2', geometry: { x: 300, y: 100, width: 100, height: 100 } }));
+    store.dispatch(
+      CellActions.addLine({
+        id: 'line1',
+        source: { id: 'sticky1', direction: 'E' },
+        target: { id: 'sticky2', direction: 'W' },
+      }),
+    );
+    store.dispatch(CellActions.selectDisplayCells(['line1']));
+    cy.mount(<BedTest store={store} />);
+  });
+
+  it('显示选择框', () => {
+    cy.get('[data-point-source]').should('have.attr', 'cx', 200).should('have.attr', 'cy', 150);
+    cy.get('[data-point-target]').should('have.attr', 'cx', 300).should('have.attr', 'cy', 150);
+  });
+
+  it('显示增加节点按钮', () => {
+    cy.get('[data-add-pointer]').first().should('have.attr', 'cx', 250).should('have.attr', 'cy', 150);
+  });
+
+  it('移动终点，将调整线条的终点坐标', () => {
+    cy.get('[data-point-target]').mousedown(2, 2);
+    cy.get('body').mousemove(390, 150).mouseup(390, 150);
+
+    cy.get('[data-cell-id="line1"] polyline').should('have.attr', 'points', '200,150 400,150');
+  });
+
+  it('移动起点，将调整线条的起点坐标', () => {
+    cy.get('[data-point-source]').mousedown(2, 2);
+    cy.get('body').mousemove(110, 150).mouseup(110, 150);
+
+    cy.get('[data-cell-id="line1"] polyline').should('have.attr', 'points', '100,150 300,150');
+  });
+
+  it('移动添加拐点按钮，将线条拐弯', () => {
+    cy.get('[data-add-pointer]').first().mousedown(2, 2).mousedown(2, 2);
+    cy.get('body').mousemove(250, 100).mouseup(250, 100);
+    cy.get('[data-cell-id="line1"] polyline').should('have.attr', 'points', '200,150 250,100 300,150');
   });
 });

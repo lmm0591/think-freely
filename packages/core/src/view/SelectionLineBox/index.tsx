@@ -11,21 +11,22 @@ export const SelectionLine = () => {
     }
   });
   const points = selectedLine?.points;
-  if (points) {
+  if (selectedLine) {
     return (
       <g className="mx-line-selection-box">
         <SelectionLineResizer key="source-resizer" type="source" line={selectedLine}></SelectionLineResizer>
-        {points.map((_, index) => (
+        {points?.map((_, index) => (
           <SelectionLineResizer key={index} pointIndex={index} type="point" line={selectedLine}></SelectionLineResizer>
         ))}
         <SelectionLineResizer key="target-resizer" type="target" line={selectedLine}></SelectionLineResizer>
         <AddPointer key="source-add-pointer" type="source" line={selectedLine}></AddPointer>
-        {points.map((_, index) => {
+        {points?.map((_, index) => {
           const isLastPoint = index === points.length - 1;
           if (!isLastPoint) {
             return <AddPointer key={index} type="point" pointIndex={index} line={selectedLine}></AddPointer>;
           }
         })}
+        <AddPointer key="target-add-pointer" type="target" line={selectedLine}></AddPointer>
       </g>
     );
   }

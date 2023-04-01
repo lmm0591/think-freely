@@ -16,7 +16,7 @@ export const JoinBox = () => {
   const dispatch = useDispatch();
   const joinCell = useJoinCell(isEditingLine);
   const { clientX, clientY } = useMouse();
-  const mousePoint = new Point(clientX, clientY).scale(1 / scale).translateByPoint(translate);
+  const mousePoint = new Point(clientX, clientY).translateByPoint(translate).scale(1 / scale);
   useEventListener('mouseup', () => {
     if (joinCell === undefined || joinCell.geometry === undefined) {
       return;

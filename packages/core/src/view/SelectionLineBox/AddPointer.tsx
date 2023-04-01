@@ -61,7 +61,6 @@ export const AddPointer = ({ pointIndex, line, type }: { pointIndex?: number; li
 
 function useGetPoint(type: LineResizerType, line: CellData, pointIndex?: number) {
   const { points, source, target } = line;
-
   const { translate, scale, map } = useSelector((state: RootState) => state.cell);
 
   let midpoint: Point | undefined = undefined;
@@ -69,13 +68,14 @@ function useGetPoint(type: LineResizerType, line: CellData, pointIndex?: number)
   let targetGeometry = target && map[target.id].geometry;
   const firstPoint = source && sourceGeometry && Rectangle.from(sourceGeometry).getPointByDirection(source.direction);
   const lastPoint = target && targetGeometry && Rectangle.from(targetGeometry).getPointByDirection(target.direction);
+  const isEmptyPoints = points === undefined || points?.length === 0;
   if (type === 'point' && points && pointIndex !== undefined) {
     midpoint = new Line(Point.from(points[pointIndex]), Point.from(points[pointIndex + 1])).getMidpoint();
-  } else if (type === 'source' && points === undefined && firstPoint && lastPoint) {
+  } else if (type === 'source' && isEmptyPoints && firstPoint && lastPoint) {
     midpoint = new Line(Point.from(firstPoint), Point.from(lastPoint)).getMidpoint();
-  } else if (type === 'source' && points?.length && firstPoint) {
+  } else if (type === 'source' && !isEmptyPoints && firstPoint) {
     midpoint = new Line(Point.from(firstPoint), Point.from(points[0])).getMidpoint();
-  } else if (type === 'target' && points?.length && lastPoint) {
+  } else if (type === 'target' && !isEmptyPoints && lastPoint) {
     midpoint = new Line(Point.from(points[0]), Point.from(lastPoint)).getMidpoint();
   }
 

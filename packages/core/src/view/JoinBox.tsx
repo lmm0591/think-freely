@@ -16,7 +16,8 @@ export const JoinBox = () => {
 
   const creatingLine = useSelector((state: RootState) => {
     const { drawing } = state.cell;
-    return drawing !== undefined && drawing.shape?.type === 'LINE' && drawing.shape;
+    const isCreatingLine = drawing !== undefined && drawing.shape?.type === 'LINE';
+    return isCreatingLine ? drawing.shape : undefined;
   });
 
   const { translate, scale } = useSelector((state: RootState) => state.cell);

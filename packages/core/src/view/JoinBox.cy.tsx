@@ -258,12 +258,15 @@ describe('测试被连接框', () => {
   });
 
   describe('测试创建线条', () => {
+    beforeEach(() => {
+      store.dispatch(CellActions.addSticky({ id: 'sticky1', geometry: { x: 50, y: 50, width: 100, height: 100 } }));
+      store.dispatch(CellActions.addSticky({ id: 'sticky2', geometry: { x: 300, y: 50, width: 100, height: 100 } }));
+      cy.mount(<BedTest store={store} />);
+    });
+
     describe('测试从便利贴的起点创建线条场景', () => {
       beforeEach(() => {
-        store.dispatch(CellActions.addSticky({ id: 'sticky1', geometry: { x: 50, y: 50, width: 100, height: 100 } }));
-        store.dispatch(CellActions.addSticky({ id: 'sticky2', geometry: { x: 300, y: 50, width: 100, height: 100 } }));
         store.dispatch(CellActions.selectDisplayCells(['sticky1']));
-        cy.mount(<BedTest store={store} />);
       });
 
       it('靠近另一个便利贴, 将显示连接框', () => {
@@ -276,6 +279,48 @@ describe('测试被连接框', () => {
         cy.get('[data-connect-direction="E"]').mousedown(3, 3);
         cy.get('body').mousemove(320, 100).mouseup(320, 100);
         cy.get('[data-shape-line] polyline').should('have.attr', 'points', '150,100 300,100');
+      });
+
+      it('靠近另一个便利贴,抬起鼠标后, 将更新 line 模型的连接属性', () => {
+        cy.get('[data-connect-direction="E"]').mousedown(3, 3);
+        cy.get('body')
+          .mousemove(320, 100)
+          .mouseup(320, 100)
+          .then(() => {
+            const line = Object.values((store.getState() as RootState).cell.map).find((cell) => cell.type === 'LINE');
+            chai.expect(line?.source).to.contain({ id: 'sticky1', direction: 'E' });
+            chai.expect(line?.target).to.contain({ id: 'sticky2', direction: 'W' });
+          });
+      });
+    });
+
+    describe('测试从便利贴的终点创建线条场景', () => {
+      beforeEach(() => {
+        store.dispatch(CellActions.selectDisplayCells(['sticky2']));
+      });
+
+      it('靠近另一个便利贴, 将显示连接框', () => {
+        cy.get('[data-connect-direction="W"]').mousedown(3, 3);
+        cy.get('body').mousemove(140, 100);
+        cy.get('[data-join-box]').should('be.exist');
+      });
+
+      it('靠近另一个便利贴,抬起鼠标后, 将连接到便利贴', () => {
+        cy.get('[data-connect-direction="W"]').mousedown(3, 3);
+        cy.get('body').mousemove(140, 100).mouseup(140, 100);
+        cy.get('[data-shape-line] polyline').should('have.attr', 'points', '300,100 150,100');
+      });
+
+      it('靠近另一个便利贴,抬起鼠标后, 将更新 line 模型的连接属性', () => {
+        cy.get('[data-connect-direction="W"]').mousedown(3, 3);
+        cy.get('body')
+          .mousemove(140, 100)
+          .mouseup(140, 100)
+          .then(() => {
+            const line = Object.values((store.getState() as RootState).cell.map).find((cell) => cell.type === 'LINE');
+            chai.expect(line?.source).to.contain({ id: 'sticky2', direction: 'W' });
+            chai.expect(line?.target).to.contain({ id: 'sticky1', direction: 'E' });
+          });
       });
     });
   });

@@ -1,5 +1,6 @@
 import { useMouse, useEventListener } from 'ahooks';
 import { useDispatch, useSelector } from 'react-redux';
+import { v4 } from 'uuid';
 import { Point } from '../model/Point';
 import { Rectangle } from '../model/Rectangle';
 import { RootState } from '../store';
@@ -12,9 +13,15 @@ export const JoinBox = () => {
     const { map, operate } = state.cell;
     return operate.editId !== undefined && map[operate.editId]?.type === 'LINE';
   });
+
+  const creatingLine = useSelector((state: RootState) => {
+    const { drawing } = state.cell;
+    return drawing !== undefined && drawing.shape?.type === 'LINE' && drawing.shape;
+  });
+
   const { translate, scale } = useSelector((state: RootState) => state.cell);
   const dispatch = useDispatch();
-  const joinCell = useJoinCell(isEditingLine);
+  const joinCell = useJoinCell(isEditingLine || creatingLine !== undefined);
   const { clientX, clientY } = useMouse();
   const mousePoint = new Point(clientX, clientY).translateByPoint(translate).scale(1 / scale);
   useEventListener('mouseup', () => {
@@ -28,15 +35,27 @@ export const JoinBox = () => {
       { direction: 'S' as DirectionFour, point: rectangle.getPointBottom() },
       { direction: 'W' as DirectionFour, point: rectangle.getPointLeft() },
     ].sort(({ point: pointA }, { point: pointB }) => pointA.getDistance(mousePoint) - pointB.getDistance(mousePoint))[0];
-
-    dispatch(
-      CellActions.finishLineResize({
-        connectCell: {
-          id: joinCell.id,
-          direction: connector.direction,
-        },
-      }),
-    );
+    if (isEditingLine) {
+      dispatch(
+        CellActions.finishLineResize({
+          connectCell: {
+            id: joinCell.id,
+            direction: connector.direction,
+          },
+        }),
+      );
+    } else if (creatingLine) {
+      dispatch(
+        CellActions.addLineByDrawing({
+          id: v4(),
+          source: creatingLine.source,
+          target: {
+            id: joinCell.id,
+            direction: connector.direction,
+          },
+        }),
+      );
+    }
   });
   if (joinCell === undefined) {
     return <></>;

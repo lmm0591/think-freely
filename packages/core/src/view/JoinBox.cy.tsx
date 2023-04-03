@@ -257,5 +257,26 @@ describe('测试被连接框', () => {
     });
   });
 
-  xit('移动线条的终点位置到自己便利贴上，将不显示被连接框', () => {});
+  describe('测试创建线条', () => {
+    describe('测试从便利贴的起点创建线条场景', () => {
+      beforeEach(() => {
+        store.dispatch(CellActions.addSticky({ id: 'sticky1', geometry: { x: 50, y: 50, width: 100, height: 100 } }));
+        store.dispatch(CellActions.addSticky({ id: 'sticky2', geometry: { x: 300, y: 50, width: 100, height: 100 } }));
+        store.dispatch(CellActions.selectDisplayCells(['sticky1']));
+        cy.mount(<BedTest store={store} />);
+      });
+
+      it('靠近另一个便利贴, 将显示连接框', () => {
+        cy.get('[data-connect-direction="E"]').mousedown(3, 3);
+        cy.get('body').mousemove(320, 100);
+        cy.get('[data-join-box]').should('be.exist');
+      });
+
+      it('靠近另一个便利贴,抬起鼠标后, 将连接到便利贴', () => {
+        cy.get('[data-connect-direction="E"]').mousedown(3, 3);
+        cy.get('body').mousemove(320, 100).mouseup(320, 100);
+        cy.get('[data-shape-line] polyline').should('have.attr', 'points', '150,100 300,100');
+      });
+    });
+  });
 });

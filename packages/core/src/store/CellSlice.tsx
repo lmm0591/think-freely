@@ -24,6 +24,7 @@ export interface CellState {
   map: Record<string, CellData>;
   translate: PointData;
   scale: number;
+  // TODO: drawing 是否要改成 creating ?
   drawing: {
     shape?: DrawingCellData; // TODO: shape 改成 cell
   };
@@ -165,10 +166,20 @@ export const CellSlice = createSlice({
       };
     },
     addLine: (state, { payload }: PayloadAction<Omit<CellData, 'type' | 'children' | 'style'> & { style?: CellStyle }>) => {
+      console.log('validatePoints(payload): ', validatePoints(payload), payload);
       if (!validatePoints(payload)) {
         return;
       }
       state.map[payload.id] = { style: {}, ...payload, type: 'LINE', children: [] };
+      console.log('state.map[payload.id]: ', state.map[payload.id]);
+    },
+
+    addLineByDrawing: (state, { payload }: PayloadAction<Omit<CellData, 'type' | 'children' | 'style'> & { style?: CellStyle }>) => {
+      if (!validatePoints(payload) || state.drawing.shape?.type !== 'LINE') {
+        return;
+      }
+      state.map[payload.id] = { style: {}, ...payload, type: 'LINE', children: [] };
+      state.drawing.shape = undefined;
     },
     addText: (state, { payload }: PayloadAction<Omit<CellData, 'type' | 'children' | 'style'> & { style?: CellStyle }>) => {
       state.map[payload.id] = {
@@ -339,11 +350,10 @@ export const CellSlice = createSlice({
       }
     },
     finishLineResize(state, { payload: { connectCell } }: PayloadAction<{ connectCell?: ConnectCellType }>) {
-      if (state.operate.editId === undefined || state.map[state.operate.editId].type !== 'LINE') {
-        return;
-      }
-      if (connectCell) {
-        const line = state.map[state.operate.editId] as CellData;
+      const line = state.map[state.operate?.editId ?? ''];
+      // const line = state.map[state.drawing?.shape ?? ''];
+      // console.log('state.drawing?.shape: ', JSON.stringify(state.drawing?.shape));
+      if (line?.type === 'LINE' && connectCell) {
         const editLineResizerType = state.operate.editLineResizerType;
         if (editLineResizerType === 'target') {
           line.target = connectCell;
@@ -352,7 +362,23 @@ export const CellSlice = createSlice({
           line.source = connectCell;
           line.points?.shift();
         }
+      } else {
+        /*
+              dispatch(
+                CellActions.addLine({
+                  id: v4(),
+                  source: { direction, id },
+                  points: [
+                    mouseMovePoint
+                      .translateByPoint(translate)
+                      .scale(1 / scale)
+                      .toData(),
+                  ],
+                }),
+              );
+              */
       }
+
       state.operate.editId = undefined;
       state.operate.editLineResizerType = undefined;
     },

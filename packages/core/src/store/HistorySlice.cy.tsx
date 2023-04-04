@@ -1,21 +1,13 @@
-import { configureStore } from '@reduxjs/toolkit';
 import { ToolkitStore } from '@reduxjs/toolkit/dist/configureStore';
-import { CellActions, CellReduce } from './CellSlice';
+import { CellActions } from './CellSlice';
 import { HistoryActions } from './HistorySlice';
-import { HistoryReduce } from './HistorySlice';
-import { UndoMiddleware } from './middleware/UndoMiddleware';
 import { RootState } from '.';
+import { CreateStore } from './CreateStore';
 
 describe('测试 HistorySlice', () => {
   let store: ToolkitStore<RootState>;
   beforeEach(() => {
-    store = configureStore({
-      reducer: {
-        cell: CellReduce,
-        history: HistoryReduce,
-      },
-      middleware: [UndoMiddleware as any],
-    });
+    store = CreateStore();
     store.dispatch(CellActions.addSticky({ id: 'sticky1', geometry: { x: 0, y: 0, width: 100, height: 100 } }));
   });
 

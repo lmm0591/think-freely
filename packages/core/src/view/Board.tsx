@@ -19,6 +19,7 @@ import { Connector } from './Connector';
 import { DrawingLine } from './DrawingShape/DrawingLine';
 import { useDeleteCell, useSelectAllCell, useZoom } from '../hook/ShortcutKey';
 import { JoinBox } from './JoinBox';
+import { useUndo } from '../hook/ShortcutKey/useUndo';
 
 export const Board = () => {
   const cells = useSelector((state: RootState) => Object.values(state.cell.map));
@@ -29,6 +30,8 @@ export const Board = () => {
   useDeleteCell();
   useSelectAllCell();
   useZoom();
+  useUndo();
+
   useEventListener('dblclick', (event) => {
     const target = event.composedPath()[0] as HTMLElement;
     if (target.classList.contains('mx-selection-box') && selectedCellIds.length === 1) {

@@ -156,7 +156,7 @@ export const CellSlice = createSlice({
   name: 'Cell',
   initialState,
   reducers: {
-    addSticky: (state, { payload }: PayloadAction<Omit<CellData, 'type' | 'children' | 'style'> & { style?: CellStyle }>) => {
+    addSticky: (state, { payload }: PayloadAction<Omit<CellData, 'type' | 'children' | 'style'> & { style?: CellStyle } & HistoryMeta>) => {
       state.map[payload.id] = {
         style: {
           fontSize: 12,

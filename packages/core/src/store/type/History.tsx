@@ -1,5 +1,5 @@
 export type HistoryMeta = {
   historyMate?: {
-    history: boolean;
+    ignore: boolean;
   };
 };

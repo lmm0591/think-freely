@@ -9,19 +9,28 @@ export interface HistoryState {
 
 export const initialState: HistoryState = {
   actions: [],
-  index: 0,
+  index: -1,
 };
 
 export const HistorySlice = createSlice({
   name: 'History',
   initialState,
   reducers: {
-    recordAction: (state, { payload }: PayloadAction<any>) => {
+    recordAction: (state, { payload }: PayloadAction<any & HistoryMeta>) => {
       state.actions.push(payload);
-      state.index = state.actions.length;
+      ++state.index;
     },
     undo: (state, {}: PayloadAction<HistoryMeta>) => {
+      if (state.index <= -1) {
+        return;
+      }
       --state.index;
+    },
+    redo: (state, {}: PayloadAction<HistoryMeta>) => {
+      if (state.index >= state.actions.length - 1) {
+        return;
+      }
+      ++state.index;
     },
   },
 });

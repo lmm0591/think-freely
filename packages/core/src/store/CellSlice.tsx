@@ -166,12 +166,10 @@ export const CellSlice = createSlice({
       };
     },
     addLine: (state, { payload }: PayloadAction<Omit<CellData, 'type' | 'children' | 'style'> & { style?: CellStyle }>) => {
-      console.log('validatePoints(payload): ', validatePoints(payload), payload);
       if (!validatePoints(payload)) {
         return;
       }
       state.map[payload.id] = { style: {}, ...payload, type: 'LINE', children: [] };
-      console.log('state.map[payload.id]: ', state.map[payload.id]);
     },
 
     addLineByDrawing: (state, { payload }: PayloadAction<Omit<CellData, 'type' | 'children' | 'style'> & { style?: CellStyle }>) => {
@@ -351,8 +349,6 @@ export const CellSlice = createSlice({
     },
     finishLineResize(state, { payload: { connectCell } }: PayloadAction<{ connectCell?: ConnectCellType }>) {
       const line = state.map[state.operate?.editId ?? ''];
-      // const line = state.map[state.drawing?.shape ?? ''];
-      // console.log('state.drawing?.shape: ', JSON.stringify(state.drawing?.shape));
       if (line?.type === 'LINE' && connectCell) {
         const editLineResizerType = state.operate.editLineResizerType;
         if (editLineResizerType === 'target') {
@@ -362,21 +358,6 @@ export const CellSlice = createSlice({
           line.source = connectCell;
           line.points?.shift();
         }
-      } else {
-        /*
-              dispatch(
-                CellActions.addLine({
-                  id: v4(),
-                  source: { direction, id },
-                  points: [
-                    mouseMovePoint
-                      .translateByPoint(translate)
-                      .scale(1 / scale)
-                      .toData(),
-                  ],
-                }),
-              );
-              */
       }
 
       state.operate.editId = undefined;

@@ -1,5 +1,6 @@
 import { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
+import { HistoryMeta } from './type/History';
 
 export interface HistoryState {
   actions: PayloadAction[];
@@ -18,6 +19,9 @@ export const HistorySlice = createSlice({
     recordAction: (state, { payload }: PayloadAction<any>) => {
       state.actions.push(payload);
       state.index = state.actions.length;
+    },
+    undo: (state, {}: PayloadAction<HistoryMeta>) => {
+      --state.index;
     },
   },
 });

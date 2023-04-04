@@ -18,6 +18,7 @@ import {
   RectangleData,
 } from './type/Cell';
 import { CalculateHeightDom, CalculateWidthDom } from '../lib/CalculateRectDom';
+import { HistoryMeta } from './type/History';
 
 export interface CellState {
   selectedCellIds: string[];
@@ -363,7 +364,7 @@ export const CellSlice = createSlice({
       state.operate.editId = undefined;
       state.operate.editLineResizerType = undefined;
     },
-    deleteCells(state, { payload: { cellIds } }: PayloadAction<{ cellIds: string[] }>) {
+    deleteCells(state, { payload: { cellIds } }: PayloadAction<{ cellIds: string[] } & HistoryMeta>) {
       const connectLines = Object.values(state.map).filter((cell) => cell.type === 'LINE' && (cell.source || cell.target));
       cellIds.forEach((cellId) => {
         connectLines.forEach((line) => {

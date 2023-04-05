@@ -1,9 +1,9 @@
 import { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
-import { HistoryMeta } from './type/History';
+import { HistoryAction, HistoryMeta } from './type/History';
 
 export interface HistoryState {
-  actions: PayloadAction[];
+  actions: HistoryAction[];
   index: number;
 }
 
@@ -16,7 +16,7 @@ export const HistorySlice = createSlice({
   name: 'History',
   initialState,
   reducers: {
-    recordAction: (state, { payload }: PayloadAction<any & HistoryMeta>) => {
+    recordAction: (state, { payload }: PayloadAction<HistoryAction & HistoryMeta>) => {
       state.actions.push(payload);
       ++state.index;
     },

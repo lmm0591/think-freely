@@ -3,9 +3,8 @@ import { ToolkitStore } from '@reduxjs/toolkit/dist/configureStore';
 import { HistoryActions } from '../HistorySlice';
 import { CellActions } from '../CellSlice';
 import { CellData } from '../type/Cell';
+import { MoveCellCommand, AddStickyCommand, DeleteCellsCommand } from '../command';
 import { RootState } from '..';
-import { AddStickyCommand } from '../command/AddStickyCommand';
-import { DeleteCellsCommand } from '../command/DeleteCellsCommand';
 
 export const UndoMiddleware = (store: ToolkitStore) => (next: Dispatch<AnyAction>) => (action: AnyAction) => {
   if (action.type === HistoryActions.undo.type) {
@@ -22,11 +21,7 @@ export const UndoMiddleware = (store: ToolkitStore) => (next: Dispatch<AnyAction
         break;
       }
       case CellActions.moveCell.type: {
-        let { id } = currentAction.action.payload as ReturnType<typeof CellActions.moveCell>['payload'];
-        const snapshot = currentAction.snapshot[id];
-        if (snapshot.geometry) {
-          store.dispatch(CellActions.moveCell({ id, point: snapshot.geometry, historyMate: { ignore: true } }));
-        }
+        MoveCellCommand.undo(store, currentAction);
         break;
       }
     }
@@ -45,8 +40,7 @@ export const UndoMiddleware = (store: ToolkitStore) => (next: Dispatch<AnyAction
         break;
       }
       case CellActions.moveCell.type: {
-        let { id, point } = currentAction.action.payload as ReturnType<typeof CellActions.moveCell>['payload'];
-        store.dispatch(CellActions.moveCell({ id, point, historyMate: { ignore: true } }));
+        MoveCellCommand.redo(store, currentAction);
         break;
       }
     }

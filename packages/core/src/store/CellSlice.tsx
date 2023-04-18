@@ -19,7 +19,7 @@ import {
 } from './type/Cell';
 import { CalculateHeightDom, CalculateWidthDom } from '../lib/CalculateRectDom';
 import { HistoryMeta } from './type/History';
-import { AddStickyCommand, AddStickyCommandPayload } from './command';
+import { AddStickyCommand, AddStickyCommandPayload, MoveCellCommand } from './command';
 import { DeleteCellsCommand, DeleteCellsCommandPayload } from './command/DeleteCellsCommand';
 
 export interface CellState {
@@ -264,21 +264,7 @@ export const CellSlice = createSlice({
       line.target = payload.target;
     },
     moveCell: (state, { payload }: PayloadAction<{ id: string; point: PointData } & HistoryMeta>) => {
-      const cell = state.map[payload.id];
-      if (cell.geometry) {
-        cell.geometry.x = payload.point.x;
-        cell.geometry.y = payload.point.y;
-        return;
-      } else if (cell.points && cell.points.length > 1) {
-        const { x, y } = Rectangle.fromPoints(cell.points) as Rectangle;
-        const dx = payload.point.x - x;
-        const dy = payload.point.y - y;
-        cell.points = cell.points.map((point) => {
-          point.x += dx;
-          point.y += dy;
-          return point;
-        });
-      }
+      MoveCellCommand.execute(state, payload);
     },
     operateRubberBand: (state, { payload }: PayloadAction<boolean>) => {
       state.operate.rubberBand = payload;

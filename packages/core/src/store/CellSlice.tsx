@@ -19,6 +19,7 @@ import {
 } from './type/Cell';
 import { CalculateHeightDom, CalculateWidthDom } from '../lib/CalculateRectDom';
 import { HistoryMeta } from './type/History';
+import { AddStickyCommand, AddStickyCommandPayload } from './command';
 
 export interface CellState {
   selectedCellIds: string[];
@@ -156,15 +157,8 @@ export const CellSlice = createSlice({
   name: 'Cell',
   initialState,
   reducers: {
-    addSticky: (state, { payload }: PayloadAction<Omit<CellData, 'type' | 'children' | 'style'> & { style?: CellStyle } & HistoryMeta>) => {
-      state.map[payload.id] = {
-        style: {
-          fontSize: 12,
-        },
-        ...payload,
-        type: 'STICKY',
-        children: [],
-      };
+    addSticky: (state, { payload }: PayloadAction<AddStickyCommandPayload>) => {
+      AddStickyCommand.execute(state, payload);
     },
     addLine: (state, { payload }: PayloadAction<Omit<CellData, 'type' | 'children' | 'style'> & { style?: CellStyle }>) => {
       if (!validatePoints(payload)) {

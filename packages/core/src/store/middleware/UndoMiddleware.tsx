@@ -5,6 +5,7 @@ import { CellActions } from '../CellSlice';
 import { CellData } from '../type/Cell';
 import { RootState } from '..';
 import { AddStickyCommand } from '../command/AddStickyCommand';
+import { DeleteCellsCommand } from '../command/DeleteCellsCommand';
 
 export const UndoMiddleware = (store: ToolkitStore) => (next: Dispatch<AnyAction>) => (action: AnyAction) => {
   if (action.type === HistoryActions.undo.type) {
@@ -17,11 +18,7 @@ export const UndoMiddleware = (store: ToolkitStore) => (next: Dispatch<AnyAction
         break;
       }
       case CellActions.deleteCells.type: {
-        let { cellIds } = currentAction.action.payload as ReturnType<typeof CellActions.deleteCells>['payload'];
-        cellIds.forEach((id) => {
-          const snapshot = currentAction.snapshot[id];
-          store.dispatch(CellActions.addSticky({ id, geometry: snapshot.geometry, historyMate: { ignore: true } }));
-        });
+        DeleteCellsCommand.undo(store, currentAction);
         break;
       }
       case CellActions.moveCell.type: {
@@ -44,8 +41,7 @@ export const UndoMiddleware = (store: ToolkitStore) => (next: Dispatch<AnyAction
         break;
       }
       case CellActions.deleteCells.type: {
-        const { cellIds } = currentAction.action?.payload as ReturnType<typeof CellActions.deleteCells>['payload'];
-        store.dispatch(CellActions.deleteCells({ cellIds, historyMate: { ignore: true } }));
+        DeleteCellsCommand.redo(store, currentAction);
         break;
       }
       case CellActions.moveCell.type: {

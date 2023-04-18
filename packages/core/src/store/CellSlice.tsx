@@ -20,6 +20,7 @@ import {
 import { CalculateHeightDom, CalculateWidthDom } from '../lib/CalculateRectDom';
 import { HistoryMeta } from './type/History';
 import { AddStickyCommand, AddStickyCommandPayload } from './command';
+import { DeleteCellsCommand, DeleteCellsCommandPayload } from './command/DeleteCellsCommand';
 
 export interface CellState {
   selectedCellIds: string[];
@@ -358,18 +359,8 @@ export const CellSlice = createSlice({
       state.operate.editId = undefined;
       state.operate.editLineResizerType = undefined;
     },
-    deleteCells(state, { payload: { cellIds } }: PayloadAction<{ cellIds: string[] } & HistoryMeta>) {
-      const connectLines = Object.values(state.map).filter((cell) => cell.type === 'LINE' && (cell.source || cell.target));
-      cellIds.forEach((cellId) => {
-        connectLines.forEach((line) => {
-          if (line.source?.id === cellId || line.target?.id === cellId) {
-            delete state.map[line.id];
-            state.selectedCellIds = difference(state.selectedCellIds, [line.id]);
-          }
-        });
-        delete state.map[cellId];
-      });
-      state.selectedCellIds = difference(state.selectedCellIds, cellIds);
+    deleteCells(state, { payload }: PayloadAction<DeleteCellsCommandPayload>) {
+      DeleteCellsCommand.execute(state, payload);
     },
     startDrawLine(state, { payload: { source, points } }: PayloadAction<{ source: ConnectCellType; points: PointData[] }>) {
       if (!state.map[source.id]) {

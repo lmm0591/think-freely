@@ -268,7 +268,7 @@ export const CellSlice = createSlice({
       line.source = payload.source;
       line.target = payload.target;
     },
-    moveCell: (state, { payload }: PayloadAction<{ id: string; point: PointData }>) => {
+    moveCell: (state, { payload }: PayloadAction<{ id: string; point: PointData } & HistoryMeta>) => {
       const cell = state.map[payload.id];
       if (cell.geometry) {
         cell.geometry.x = payload.point.x;

@@ -1,11 +1,11 @@
 import { Draft } from '@reduxjs/toolkit';
-import difference from 'lodash.difference';
 import { Command } from './Command';
 import { HistoryAction, HistoryMeta } from '../type/History';
 import { CellActions, CellState } from '../CellSlice';
 import { ToolkitStore } from '@reduxjs/toolkit/dist/configureStore';
 import { PointData } from '../type/Cell';
 import { Rectangle } from '../../model/Rectangle';
+import { commandManager } from './CommandManager';
 
 export type MoveCellCommandPayload = { id: string; point: PointData } & HistoryMeta;
 
@@ -39,3 +39,5 @@ export const MoveCellCommand: Command = {
     }
   },
 };
+
+commandManager.register('Cell', 'moveCell', MoveCellCommand);

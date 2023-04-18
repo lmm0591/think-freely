@@ -1,6 +1,5 @@
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
-import difference from 'lodash.difference';
 import { Line } from '../model/Line';
 import { Point } from '../model/Point';
 import { Rectangle } from '../model/Rectangle';

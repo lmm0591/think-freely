@@ -4,6 +4,7 @@ import { Command } from './Command';
 import { HistoryAction, HistoryMeta } from '../type/History';
 import { CellActions, CellState } from '../CellSlice';
 import { ToolkitStore } from '@reduxjs/toolkit/dist/configureStore';
+import { commandManager } from './CommandManager';
 
 export type DeleteCellsCommandPayload = { cellIds: string[] } & HistoryMeta;
 
@@ -33,3 +34,5 @@ export const DeleteCellsCommand: Command = {
     state.selectedCellIds = difference(state.selectedCellIds, cellIds);
   },
 };
+
+commandManager.register('Cell', 'deleteCells', DeleteCellsCommand);

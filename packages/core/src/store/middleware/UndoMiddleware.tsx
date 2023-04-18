@@ -3,47 +3,19 @@ import { ToolkitStore } from '@reduxjs/toolkit/dist/configureStore';
 import { HistoryActions } from '../HistorySlice';
 import { CellActions } from '../CellSlice';
 import { CellData } from '../type/Cell';
-import { MoveCellCommand, AddStickyCommand, DeleteCellsCommand } from '../command';
+import { commandManager } from '../command/CommandManager';
 import { RootState } from '..';
 
 export const UndoMiddleware = (store: ToolkitStore) => (next: Dispatch<AnyAction>) => (action: AnyAction) => {
+  const state = store.getState() as RootState;
   if (action.type === HistoryActions.undo.type) {
-    const state = store.getState() as RootState;
     const currentAction = state.history.actions[state.history.index];
-
-    switch (currentAction?.action?.type) {
-      case CellActions.addSticky.type: {
-        AddStickyCommand.undo(store, currentAction);
-        break;
-      }
-      case CellActions.deleteCells.type: {
-        DeleteCellsCommand.undo(store, currentAction);
-        break;
-      }
-      case CellActions.moveCell.type: {
-        MoveCellCommand.undo(store, currentAction);
-        break;
-      }
-    }
+    commandManager.commands[currentAction?.action?.type]?.undo(store, currentAction);
   }
 
   if (action.type === HistoryActions.redo.type) {
-    const state = store.getState();
     const currentAction = state.history.actions[state.history.index + 1];
-    switch (currentAction?.action?.type) {
-      case CellActions.addSticky.type: {
-        AddStickyCommand.redo(store, currentAction);
-        break;
-      }
-      case CellActions.deleteCells.type: {
-        DeleteCellsCommand.redo(store, currentAction);
-        break;
-      }
-      case CellActions.moveCell.type: {
-        MoveCellCommand.redo(store, currentAction);
-        break;
-      }
-    }
+    commandManager.commands[currentAction?.action?.type]?.redo(store, currentAction);
   }
 
   if (action.payload?.historyMate?.ignore === undefined) {

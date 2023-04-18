@@ -17,6 +17,6 @@
     "types": ["cypress", "cypress-real-events"],
     "jsx": "react-jsx"
   },
-  "include": ["src", "cypress/support/cypress.d.ts"],
+  "include": ["src", "test", "cypress/support/cypress.d.ts"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

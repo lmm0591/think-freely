@@ -9,10 +9,10 @@ import { commandManager } from './CommandManager';
 export type DeleteCellsCommandPayload = { cellIds: string[] } & HistoryMeta;
 
 export const DeleteCellsCommand: Command = {
-  undo: (store: ToolkitStore, currentAction: HistoryAction) => {
+  undo: (store: ToolkitStore, currentAction: HistoryAction, preAction: HistoryAction) => {
     let { cellIds } = currentAction.action.payload as ReturnType<typeof CellActions.deleteCells>['payload'];
     cellIds.forEach((id) => {
-      const snapshot = currentAction.snapshot[id];
+      const snapshot = preAction.afterSnapshot[id];
       store.dispatch(CellActions.addSticky({ id, geometry: snapshot.geometry, historyMate: { ignore: true } }));
     });
   },

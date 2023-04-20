@@ -62,11 +62,15 @@ describe('测试 HistorySlice', () => {
     });
 
     it('删除便利贴，记录快照', () => {
-      chai.expect(store.getState().history.actions[1].snapshot.sticky1).deep.contain({
+      chai.expect(store.getState().history.actions[1].beforeSnapshot.sticky1).deep.contain({
         geometry: { x: 0, y: 0, width: 100, height: 100 },
         id: 'sticky1',
         type: 'STICKY',
       });
+    });
+
+    it('删除便利贴，更新删除后的快照', () => {
+      chai.expect(store.getState().history.actions[1].afterSnapshot.sticky1).be.undefined;
     });
 
     it('触发撤销操作，将取消删除', () => {
@@ -90,8 +94,16 @@ describe('测试 HistorySlice', () => {
     });
 
     it('移动便利贴，记录快照', () => {
-      chai.expect(store.getState().history.actions[1].snapshot.sticky1).deep.contain({
+      chai.expect(store.getState().history.actions[1].beforeSnapshot.sticky1).deep.contain({
         geometry: { x: 0, y: 0, width: 100, height: 100 },
+        id: 'sticky1',
+        type: 'STICKY',
+      });
+    });
+
+    it('移动便利贴，更新移动后的快照', () => {
+      chai.expect(store.getState().history.actions[1].afterSnapshot.sticky1).deep.contain({
+        geometry: { x: 100, y: 100, width: 100, height: 100 },
         id: 'sticky1',
         type: 'STICKY',
       });

@@ -28,7 +28,6 @@ export const UndoMiddleware = (store: ToolkitStore) => (next: Dispatch<AnyAction
   } else if (action.type === HistoryActions.redo.type) {
     const currentAction = state.history.actions[state.history.index + 1];
     const preAction = state.history.actions[state.history.index];
-
     commandManager.commands[currentAction?.action?.type]?.redo(store, currentAction, preAction);
   }
 

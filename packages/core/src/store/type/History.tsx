@@ -13,7 +13,6 @@ export type HistoryMeta = {
 export type HistoryAction = {
   id: string;
   action: AnyAction;
-  snapshot: Record<string, CellData>;
   afterSnapshot: Record<string, CellData>;
   beforeSnapshot: Record<string, CellData>;
 };

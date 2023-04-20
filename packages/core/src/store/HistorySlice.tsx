@@ -25,7 +25,6 @@ export const HistorySlice = createSlice({
         state.actions.push({
           id: payload.id,
           action: payload.action,
-          snapshot: payload.snapshot,
           beforeSnapshot: payload.snapshot,
           afterSnapshot: {},
         });

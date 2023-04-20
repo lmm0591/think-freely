@@ -1,6 +1,7 @@
-import { PayloadAction } from '@reduxjs/toolkit';
+import { AnyAction, PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
 import { HistoryAction, HistoryMeta } from './type/History';
+import { CellData } from './type/Cell';
 
 export interface HistoryState {
   actions: HistoryAction[];
@@ -16,9 +17,25 @@ export const HistorySlice = createSlice({
   name: 'History',
   initialState,
   reducers: {
-    recordAction: (state, { payload }: PayloadAction<HistoryAction & HistoryMeta>) => {
-      state.actions.push(payload);
-      ++state.index;
+    recordAction: (
+      state,
+      { payload }: PayloadAction<{ id: string; action: AnyAction; snapshot: Record<string, CellData> } & HistoryMeta>,
+    ) => {
+      if (payload.historyMate?.recordStage === 'before') {
+        state.actions.push({
+          id: payload.id,
+          action: payload.action,
+          snapshot: payload.snapshot,
+          beforeSnapshot: payload.snapshot,
+          afterSnapshot: {},
+        });
+      } else if (payload.historyMate?.recordStage === 'after') {
+        const existAction = state.actions.find((action) => action.id === payload.id);
+        if (existAction) {
+          existAction.afterSnapshot = payload.snapshot;
+        }
+        ++state.index;
+      }
     },
     undo: (state, {}: PayloadAction<HistoryMeta>) => {
       if (state.index <= -1) {

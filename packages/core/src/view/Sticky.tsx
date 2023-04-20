@@ -23,6 +23,19 @@ export const Sticky = memo(({ cellId }: { cellId: string }) => {
             .scale(1 / scale)
             .translateByPoint(mouseRelativePoint.scale(1 / scale))
             .toData(),
+          historyMate: { ignore: true },
+        }),
+      );
+    },
+    dragEndHandler: ({ mouseMovePoint, mouseRelativePoint }) => {
+      dispatch(
+        CellActions.moveCell({
+          id: cellId,
+          point: mouseMovePoint
+            .translateByPoint(translate)
+            .scale(1 / scale)
+            .translateByPoint(mouseRelativePoint.scale(1 / scale))
+            .toData(),
         }),
       );
     },

@@ -10,9 +10,9 @@ import { commandManager } from './CommandManager';
 export type MoveCellCommandPayload = { id: string; point: PointData } & HistoryMeta;
 
 export const MoveCellCommand: Command = {
-  undo: (store: ToolkitStore, currentAction: HistoryAction) => {
+  undo: (store: ToolkitStore, currentAction: HistoryAction, preAction: HistoryAction) => {
     let { id } = currentAction.action.payload as ReturnType<typeof CellActions.moveCell>['payload'];
-    const snapshot = currentAction.snapshot[id];
+    const snapshot = preAction.afterSnapshot[id];
     if (snapshot.geometry) {
       store.dispatch(CellActions.moveCell({ id, point: snapshot.geometry, historyMate: { ignore: true } }));
     }

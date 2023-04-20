@@ -110,4 +110,23 @@ describe('测试 HistorySlice', () => {
       chai.expect(store.getState().history.index).to.equal(1);
     });
   });
+
+  describe('测试连续移动元素场景', () => {
+    beforeEach(() => {
+      store.dispatch(CellActions.addSticky({ id: 'sticky1', geometry: { x: 0, y: 0, width: 100, height: 100 } }));
+      store.dispatch(CellActions.moveCell({ id: 'sticky1', point: { x: 100, y: 100 }, historyMate: { ignore: true } }));
+    });
+
+    it('移动便利贴，不记录快照', () => {
+      chai.expect(store.getState().history.actions.length).to.equal(1);
+    });
+
+    it('移动便利贴后撤销操作，返回到创建时的位置', () => {
+      store.dispatch(CellActions.moveCell({ id: 'sticky1', point: { x: 200, y: 200 } }));
+      store.dispatch(HistoryActions.undo({ historyMate: { ignore: true } }));
+
+      chai.expect(store.getState().history.actions.length).to.equal(2);
+      chai.expect(store.getState().cell.map['sticky1'].geometry).eql({ x: 0, y: 0, width: 100, height: 100 });
+    });
+  });
 });
